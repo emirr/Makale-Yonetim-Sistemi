@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui" >
+<h:head>
+</h:head>
+<h:body>
+	
+	<h:form>
+		<p:panel id="panel" header="Giris">
+		<h:panelGrid columns="2">
+			<h:outputLabel for="kullaniciAdi" value="Kullanici Ad:" />
+			<p:inputText id="kullaniciAdi" value="#{kullaniciController.kullaniciAd}" required="true" label="kullaniciAdi">
+				<f:validateLength minimum="3" />
+			</p:inputText>
+			
+ 			<h:outputLabel for="sifre" value="Sifre:" />			
+			 <p:password id="sifre" value="#{kullaniciController.sifre}" required="true" label="sifre" >
+			</p:password>
+			<p:message for="sifre" />
+			
+		</h:panelGrid>
+		
+		<p:commandButton action="#{kullaniciController.login}" value="Giris" ajax="false" >
+		</p:commandButton>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

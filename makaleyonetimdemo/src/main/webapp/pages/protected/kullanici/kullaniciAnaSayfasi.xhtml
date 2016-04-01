@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:head><title>Makale Listesi</title></h:head>
+<h:body>
+	<h:form>
+		<p:panel header="Ana Sayfa bu bir kullanici sayfasidir">
+			<p>
+				<h:outputText value="hosgeldin , #{kullaniciController.kullanici}!" />
+			</p>
+			<p:dataTable var="makale" value="#{kullaniciAnaSayfaController.makaleler}">
+				
+				
+				<p:column headerText="Makale Ad">
+					<h:outputText value="#{makale.makaleAdi}" />
+				</p:column>
+				<p:column headerText="Yayın Tipi">
+					<h:outputText value="#{makale.makaleYayinTipi}" />
+				</p:column>
+				
+			</p:dataTable>
+			<p:commandButton value="Logout"
+				action="#{kullaniciController.logout}" />
+		</p:panel>
+	</h:form>
+</h:body>
+</html>
