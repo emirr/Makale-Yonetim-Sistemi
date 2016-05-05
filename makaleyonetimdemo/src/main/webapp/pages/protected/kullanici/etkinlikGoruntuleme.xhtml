@@ -1,12 +1,41 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" >
+<h:head><title>Etkinliklerinizi İnceleyin</title> </h:head>
 <h:body>
-	<ui:composition template="/pages/protected/templates/master.xhtml">
-		<ui:define name="divMain">
-			#{bundle.welcomeMessage} :<br/>
-			<h:graphicImage library="images" name="logoReal.png" />
-		</ui:define>	
-	</ui:composition>
+	<h:form>
+	<p:menubar style="font-size: 18px;" id="menu">
+			<p:menuitem
+				value="Kullanıcı Etkinlik Bilgileri">
+
+			</p:menuitem>
+			
+			</p:menubar>
+			<p:separator></p:separator>
+	
+			 
+	<p:dataTable id="etknlkdtables" binding="#{table}" var="etkinlik"
+					value="#{kullaniciEtkinlikController.etkinlikler}"
+					rows="10" paginator="true">
+					
+	<p:column   headerText="Etkinlik Tanımı" sortBy="#{etkinlik.tur}">
+						<h:outputText value="#{etkinlik.tur}" />
+
+					</p:column>
+					<p:column   headerText="Etkinlik Zamanı" > 
+
+						<h:outputText value="#{kullaniciEtkinlikController.etkinlikZamanBilgileri[table.rowIndex]}" />
+
+					</p:column>
+	
+	
+	
+	</p:dataTable>
+	
+	<p:separator></p:separator>
+	
+	<p:commandButton value="Ana Sayfaya Dön" action="#{kullaniciEtkinlikController.anaSayfa}"	/>
+	
+	</h:form>
 </h:body>
 </html>

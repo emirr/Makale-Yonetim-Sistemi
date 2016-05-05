@@ -81,6 +81,7 @@ public class MakaleService extends AbstractService<Makale> {
 				// ReferansService rs = new ReferansService();
 				rs.deleteMakaleReferans(ref);
 				MakalePathService mps = new MakalePathService();
+				
 				mps.deleteMakalePath(mp);
 				EtkinlikService ets = new EtkinlikService();
 				kullanici.getEtkinlikler().add(
@@ -123,22 +124,43 @@ public class MakaleService extends AbstractService<Makale> {
 	}
 
 	// idli olabilir 2-->denenecek 2
-	public void updateMakale(Makale makale, String ad) {
+	public void updateMakale(int id, String ad, String anahtarKeliemler) {
 		EntityManager em = getEmf().createEntityManager();
 
 		try {
 			em.getTransaction().begin();
+//			Makale makale = em.find(Makale.class, id);
+			//makale = em.merge(makale);
+			Makale makale = findMakaleById(id);
 			makale = em.merge(makale);
-			makale.setMakaleAdi(ad);
+			 em.flush() ;
+			String etkinlikBilgi = " ";
+			if(ad != null){
+				makale.setMakaleAdi(ad);
+				System.out.println("ad:" + ad);
+				etkinlikBilgi+="Ad";
+			}
+			if(anahtarKeliemler != null){
+				makale.setAnahtarKelimeler(anahtarKeliemler);
+				System.out.println("anahtar kelimeler:" + anahtarKeliemler);
+
+				etkinlikBilgi+=", AnahtarKelimeler";
+			}
+			System.out.println("etkinlik bilgi:" + etkinlikBilgi);
+			// Query q = em.createQuery("update com.entity.Makale m set m.makaleAdi:ad m.maka")
 			// makale.setMakaleMetadata(md);
 			// makale.setMakalePath(path);
 			// makale.setMakaleYayinTipi(yayinTipi);
 			// makale.setReferans(ref);
-			String eskiisim = makale.getMakaleAdi();
-			EtkinlikService ets = new EtkinlikService();
-			makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "makale",
-					eskiisim + makale.getMakaleAdi() + "olarak deðiþtirildi"));
+			//String eskiisim = makale.getMakaleAdi();
 			em.getTransaction().commit();
+			EtkinlikService ets = new EtkinlikService();
+			if(ad != null || anahtarKeliemler != null){
+				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "makale",
+						makale.getMakaleAdi() + etkinlikBilgi + "bilgileri güncellendi."));
+			}
+			
+			
 		} finally {
 			if (em != null) {
 				em.close();
@@ -243,13 +265,25 @@ public class MakaleService extends AbstractService<Makale> {
 			Makale makale = em.find(Makale.class, makaleId);
 			Kullanici sahipKullanici = em.find(Kullanici.class, sahipKullaniciId);// kullanýcýEtkinlik
 																					// için
-																					// gerekli
+				if(makale.getReferans() == null){
+					System.out.println("makale ref null");
+				}
+				else
+					System.out.println("makale ref null deðil");
+
 			Kullanici digerKullanici = em.find(Kullanici.class, digerKullanicId);
+			if(digerKullanici == null){
+				System.out.println("diðerki null");
+
+			}
+			else
+				System.out.println("diðerki null deðil");
+
 			// if kullanýcý zaten makaleye sahip deðilse
 			ReferansService rs = new ReferansService();
 			if (rs.kullaniciSahipOlduguReferanslar(digerKullanicId) != null) {
 				if (!rs.kullaniciSahipOlduguReferanslar(digerKullanicId).contains(makale.getReferans())) {
-					System.out.println("kullanýcý gönderielcek makaleye sahip deðil");
+					System.out.println("kullanýcý gönderilecek makaleye sahip deðil");
 					Makale yeniMakale = new Makale();
 					yeniMakale.setAnahtarKelimeler(makale.getAnahtarKelimeler());
 					yeniMakale.setMakaleAdi(makale.getMakaleAdi());
@@ -259,7 +293,7 @@ public class MakaleService extends AbstractService<Makale> {
 					// yeniMakale.setReferans(makale.getReferans());
 					createMakaleForKullanici(yeniMakale, digerKullanicId, makale.getMakalePath(),
 							makale.getMakaleYayinTipi(), makale.getReferans());
-					MakaleMetadata mm = new MakaleMetadata("not yok", 0, makale.getMakaleMetadata().getMakaleKonu());
+					MakaleMetadata mm = new MakaleMetadata(makale.getMakaleMetadata().getMakaleNot(), 0, makale.getMakaleMetadata().getMakaleKonu());
 					MakaleMetadataService mms = new MakaleMetadataService();
 					mms.createMakaleMetadata(mm, yeniMakale.getId());
 					//yeniMakale.setMakaleMetadata(mm);
@@ -275,6 +309,7 @@ public class MakaleService extends AbstractService<Makale> {
 				} else
 					System.out.println("paylaþmak istediðin kullanýcý makaleye zaten sahip");
 			} else {
+				//makalenin gönderileceði kullanýcýnýn hiç makalesi yoksa bu kol çalýþýr.
 				Makale yeniMakale = new Makale();
 				yeniMakale.setAnahtarKelimeler(makale.getAnahtarKelimeler());
 				yeniMakale.setMakaleAdi(makale.getMakaleAdi());
@@ -285,7 +320,7 @@ public class MakaleService extends AbstractService<Makale> {
 				// yeniMakale.setReferans(makale.getReferans());
 				createMakaleForKullanici(yeniMakale, digerKullanicId, makale.getMakalePath(),
 						makale.getMakaleYayinTipi(), makale.getReferans());
-				MakaleMetadata mm = new MakaleMetadata("not yok", 0, makale.getMakaleMetadata().getMakaleKonu());
+				MakaleMetadata mm = new MakaleMetadata(makale.getMakaleMetadata().getMakaleNot(), 0, makale.getMakaleMetadata().getMakaleKonu());
 				MakaleMetadataService mms1 = new MakaleMetadataService();
 				mms1.createMakaleMetadata(mm, yeniMakale.getId());
 				// etkinlik bilgisi eklenecek.

@@ -43,23 +43,36 @@ public class MakaleYayinTipiService extends AbstractService<MakaleYayinTipi> {
 			//yayinTipi = em.merge(yayinTipi);
 			Makale makale = em.find(Makale.class, makaleId);
 			MakaleYayinTipi yayinTipi = makale.getMakaleYayinTipi();
+			yayinTipi = em.merge(yayinTipi);
+			System.out.println("mevcut yayýn tipi:" + yayinTipi.toString());
+			yayinTipi.setBildiri(false);
+			yayinTipi.setKitap(false);
+			yayinTipi.setKonferans(false);
+			yayinTipi.setTez(false);
 			//System.out.println("bulunan MakaleYayinTipi:" + MakaleYayinTipi.getMakaleYayinTipibasSayfaNo());
 			if (isBildiri == true){
 				yayinTipi.setBildiri(isBildiri);
+				System.out.println("yayýn türü:" + "bildiri");
 			}else{ if(isKonferans == true){
 					yayinTipi.setKonferans(isKonferans);
+					System.out.println("yayýn türü:" + "konferans");
 				  }
 				  else {if(isTez == true){
 						yayinTipi.setTez(isTez);
+						System.out.println("yayýn türü:" + "tez");
 				  }
-				  else
+				  else{
 					yayinTipi.setKitap(isKitap);
+					System.out.println("yayýn türü:" + "kitap");
+				  }
 				  }
 			}
 		//	Makale makale = em.find(Makale.class, makaleId);
-			EtkinlikService ets = new EtkinlikService();
-			makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "makaleYayintip",makale.getMakaleAdi() + "yayin tipi güncelleme"));
 			em.getTransaction().commit();
+			EtkinlikService ets = new EtkinlikService();
+			if(isBildiri != false || isKonferans != false || isTez != false || isKitap != false)
+				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "makaleYayintip",makale.getMakaleAdi() + "yayin tipi güncellendi"));
+			
 		} finally {
 			if (em != null) {
 				em.close();

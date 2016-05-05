@@ -7,6 +7,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.entity.Dergi;
+
 import com.entity.Makale;
 import com.entity.Referans;
 import com.entity.Yazar;
@@ -24,8 +25,12 @@ public class DergiService extends AbstractService<Dergi> {
 
 		try {
 			em.getTransaction().begin();
+			// Dergi dergi1 = findExistDergi(dergi);
+
 			em.persist(dergi);
+
 			em.getTransaction().commit();
+
 		} finally {
 			if (em != null) {
 				em.close();
@@ -44,8 +49,10 @@ public class DergiService extends AbstractService<Dergi> {
 				dergi.setDergiAdi(dergiAd);
 			Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
-			makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "dergi",
+			if (dergiAd != null){
+				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "dergi",
 					makale.getReferans().getDergi().getDergiAdi() + "dergi ad güncelleme"));
+			}
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {
@@ -104,13 +111,29 @@ public class DergiService extends AbstractService<Dergi> {
 			}
 		}
 	}
-	public void deleteDergi(Dergi d){
+
+	public void deleteDergi(Dergi d) {
 		EntityManager em = getEmf().createEntityManager();
 		try {
 			em.getTransaction().begin();
 			em.remove(em.merge(d));
 			em.getTransaction().commit();
-		}finally {
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	public List<Dergi> listDergiler() {
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			Query query = em.createQuery("SELECT d FROM com.entity.Dergi d");
+			
+			return query.getResultList();
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
 			if (em != null) {
 				em.close();
 			}

@@ -196,6 +196,13 @@ public class Test {
 		System.out.println("makale silinmiþ olabilir.");
 		//ks1.deleteKullanici(k5, k6);
 		AbstractService.getEmf().close();
+		
+		
+		
+		
+		
+		
+		
 
 	}
 

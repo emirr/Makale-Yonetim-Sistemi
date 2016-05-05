@@ -154,6 +154,8 @@ public class Referans implements Serializable{
 			return false;
 		if (yil != other.yil)
 			return false;
+		if (id != other.id)
+			return false;
 		return true;
 	}
 }

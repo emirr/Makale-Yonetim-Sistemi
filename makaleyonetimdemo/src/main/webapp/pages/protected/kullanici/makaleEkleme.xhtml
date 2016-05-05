@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Makale Ekleme</title>
+
+</h:head>
+<h:body>
+
+	<h:form>
+		<p:growl id="growl" sticky="true" showDetail="true" />
+
+		<p:wizard flowListener="#{makaleEkleController.onFlowProcess}">
+			<p:tab id="dergireferans" title="Dergi-Referans">
+				<p:panel header="Dergi ve Referans Bilgileri">
+					<p:messages />
+
+					<h:panelGrid columns="2" columnClasses="label, value">
+						<f:event listener="#{makaleEkleController.validateSayfaNo}"
+							type="postValidate" />
+
+
+						<h:outputText value="Dergi Adı: *" />
+						<p:autoComplete id="dergiAd"
+							value="#{makaleEkleController.dergi.dergiAdi}" required="true"
+							label="Dergiadi"
+							completeMethod="#{makaleEkleController.completeDergi}">
+							<p:ajax event="blur" update="out1" />
+						</p:autoComplete>
+
+						<h:outputText value="Dergi Sayi: *" />
+						<p:inputText id="dergiSayi"
+							value="#{makaleEkleController.referans.sayi}" required="true"
+							label="Dergisayi">
+							<p:ajax event="blur" update="out2" />
+						</p:inputText>
+
+						<h:outputText value="Dergi Yıl: *" />
+						<p:inputText id="dergiYil"
+							value="#{makaleEkleController.referans.yil}" required="true"
+							label="Dergiyil">
+							<p:ajax event="blur" update="out3" />
+						</p:inputText>
+
+						<h:outputText value="Dergi CiltNo: *" />
+						<p:inputText id="dergiCiltNo"
+							value="#{makaleEkleController.referans.ciltNo}" required="true"
+							label="DergiciltNo">
+							<p:ajax event="blur" update="out4" />
+						</p:inputText>
+
+						<h:outputText value="Baş Sayfa No: *" />
+						<p:inputText id="basSayfaNo"
+							value="#{makaleEkleController.referans.basSayfaNo}"
+							required="true" label="basSayfaNo">
+							<p:ajax event="blur" update="out5" />
+
+
+						</p:inputText>
+
+						<h:outputText value="Son Sayfa No: *" />
+						<p:inputText id="sonSayfaNo"
+							value="#{makaleEkleController.referans.sonSayfaNo}"
+							required="true" label="sonSayfaNo">
+							<p:ajax event="blur" update="out6" />
+						</p:inputText>
+
+						<p:commandButton value="Kaydet" type="button"
+							onclick="PF('confirmDialog').show()" ></p:commandButton>
+
+						<p:commandButton value="Ana Sayfaya Dön" 
+							onclick="PF('confirmDialog2').show()"></p:commandButton>
+						<p:confirmDialog header="Ana Sayfaya Dönmek İstiyormusunuz?"
+							message="Eğer ana sayfaya dönerseniz kaydettiğiniz verileri kaybedeceksiniz.
+							Ana sayfaya dönmek istediğinizden emin misiniz?"
+							severity="alert" widgetVar="confirmDialog2">
+							<p:commandButton value="Evet, Onaylıyorum"
+								action="#{makaleEkleController.silme}"
+								immediate="true" oncomplete="PF('confirmDialog2').hide()" ajax="false" />
+							<p:commandButton value="Hayır, Onaylamıyorum"
+								onclick="PF('confirmDialog2').hide();" type="button" />
+
+						</p:confirmDialog>
+
+						<p:confirmDialog header="Dergi-Referans Bilgileri Onaylama"
+							message="Girmiş olduğunuz bilgileri onaylıyormusunuz?"
+							severity="alert" widgetVar="confirmDialog">
+							<h:panelGrid id="innerconfirmation">
+								<h:panelGrid columns="2" columnClasses="label, value">
+
+									<h:outputText value="Dergi Adı: " />
+									<h:outputText id="out1"
+										value="#{makaleEkleController.dergi.dergiAdi}"
+										styleClass="outputLabel" />
+									<h:outputText value="Dergi Sayı: " />
+									<h:outputText id="out2"
+										value="#{makaleEkleController.referans.sayi}"
+										styleClass="outputLabel" />
+									<h:outputText value="Dergi Basım Yılı: " />
+									<h:outputText id="out3"
+										value="#{makaleEkleController.referans.yil}"
+										styleClass="outputLabel" />
+									<h:outputText value="Dergi Cilt No: " />
+									<h:outputText id="out4"
+										value="#{makaleEkleController.referans.ciltNo}"
+										styleClass="outputLabel" />
+									<h:outputText value="BasSayfa No: " />
+									<h:outputText id="out5"
+										value="#{makaleEkleController.referans.basSayfaNo}"
+										styleClass="outputLabel" />
+									<h:outputText value="Son Sayfa No: " />
+									<h:outputText id="out6"
+										value="#{makaleEkleController.referans.sonSayfaNo}"
+										styleClass="outputLabel" />
+
+								</h:panelGrid>
+							</h:panelGrid>
+							<p:commandButton value="Evet, Onaylıyorum"
+								action="#{makaleEkleController.referansiDenetle}"
+								oncomplete="PF('confirmDialog').hide()" ajax="false" />
+							<p:commandButton value="Hayır, Onaylamıyorum"
+								onclick="PF('confirmDialog').hide();" type="button" />
+
+						</p:confirmDialog>
+
+					</h:panelGrid>
+
+				</p:panel>
+			</p:tab>
+			
+			<p:tab id="makalebilgi" title="Makale Tip-Yazar-Veri ">
+				<p:panel header="Makale Tip-Yazar-Veri Yüklemeleri ">
+					<h:panelGrid id="ikinciadim" columns="1" columnClasses="label, value">
+
+				<h:panelGrid>
+					<h:panelGrid columns="2" columnClasses="label, value">
+						<h:outputLabel value="Yayın Tipi:" style="font-weight:bold" />
+						<h:selectOneRadio
+							disabled="#{makaleEkleController.tipYazarOlusturuldu}"
+							value="#{makaleEkleController.makaleTip}" required="true">
+							<p:ajax event="blur" update="outtip" />
+							<f:selectItem itemValue="Tez" itemLabel="Tez" />
+							<f:selectItem itemValue="Kitap" itemLabel="Kitap " />
+							<f:selectItem itemValue="Bildiri" itemLabel="Bildiri " />
+							<f:selectItem itemValue="Konferans" itemLabel="Konferans" />
+						</h:selectOneRadio>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" columnClasses="label, value">
+					<h:outputLabel value="Makale Yazar:" style="font-weight:bold" />
+					<p:autoComplete id="yzr"
+						disabled="#{makaleEkleController.tipYazarOlusturuldu}"
+						value="#{makaleEkleController.yazarAd}" required="true"
+						completeMethod="#{makaleEkleController.completeYazar}">
+
+					</p:autoComplete>
+
+					<p:commandButton action="#{makaleEkleController.yazarEkle}"
+						disabled="#{makaleEkleController.tipYazarOlusturuldu}"
+						value="Yazar Ekle" process="@this yzr"
+						update="@widgetVar(confirmDialog8)">
+
+					</p:commandButton>
+
+				</h:panelGrid>
+
+
+				<p:fileUpload value="#{makaleEkleController.file}" mode="advanced"
+					disabled="#{!makaleEkleController.tipYazarOlusturuldu}"
+					fileUploadListener="#{makaleEkleController.fileUploadListener}" allowTypes="/(\.|\/)(pdf)$/"></p:fileUpload>
+
+				<h:panelGrid columns="2" columnClasses="label, value">
+					<p:commandButton value="Tip-Yazar Kaydet" type="button"
+						onclick="PF('confirmDialog8').show()" disabled="#{makaleEkleController.tipYazarOlusturuldu}"></p:commandButton>
+
+					<p:commandButton value="Ana Sayfaya Dön"
+						onclick="PF('confirmDialog3').show()"></p:commandButton>
+				</h:panelGrid>
+
+				<p:confirmDialog header="Ana Sayfaya Dönmek İstiyormusunuz?"
+					message="Eğer ana sayfaya dönerseniz kaydettiğiniz verileri kaybedeceksiniz.
+				Ana sayfaya dönmek istediğinizden emin misiniz?"
+					severity="alert" widgetVar="confirmDialog3">
+					<p:commandButton value="Evet, Onaylıyorum"
+						action="#{makaleEkleController.silme}" immediate="true"
+						oncomplete="PF('confirmDialog3').hide()" ajax="false" />
+					<p:commandButton value="Hayır, Onaylamıyorum"
+						onclick="PF('confirmDialog3').hide();" type="button" />
+
+				</p:confirmDialog>
+
+				<p:confirmDialog header="Tip-Yazar bilgilerini onaylıyormusunuz?"
+					widgetVar="confirmDialog8">
+					<h:panelGrid columns="2" columnClasses="label, value">
+
+						<h:outputLabel value="Yayın Tipi:" style="font-weight:bold" />
+						<h:outputText id="outtip"
+							value="#{makaleEkleController.makaleTip}" />
+
+						<h:outputLabel id="outyzr" value="Yazarlar:"
+							style="font-weight:bold" />
+						<h:outputText value="#{makaleEkleController.yazarAdlari}" />
+					</h:panelGrid>
+					<p:commandButton value="Evet, Onaylıyorum"
+						action="#{makaleEkleController.tipYazarOlustur}"
+						oncomplete="PF('confirmDialog8').hide()" ajax="false"
+						update="ikinciadim" />
+					<p:commandButton value="Hayır, Onaylamıyorum"
+						onclick="PF('confirmDialog8').hide();" type="button" />
+				</p:confirmDialog>
+
+			</h:panelGrid>
+
+
+				</p:panel>
+			</p:tab>
+			
+			
+			<p:tab id="dogrulamayukleme" title="Doğrulama-Yükleme">
+				<p:panel
+					header="Makale Doğrulama ve Makale Verisini Kalıcı Olarak Yükleme">
+					<p:messages />
+					<h:panelGrid columns="2" columnClasses="label, value">
+						<h:outputText value="Firstname: *" />
+						<p:inputText value="#{userWizard.user.firstname}" required="true"
+							label="Firstname" />
+
+						<h:outputText value="Lastname: *" />
+						<p:inputText value="#{userWizard.user.lastname}" required="true"
+							label="Lastname" />
+
+						<h:outputText value="Age: " />
+						<p:inputText value="#{userWizard.user.age}" />
+
+						<h:outputText value="Skip to last: " />
+						<h:selectBooleanCheckbox value="#{userWizard.skip}" />
+					</h:panelGrid>
+				</p:panel>
+			</p:tab>
+		</p:wizard>
+	</h:form>
+</h:body>
+</html>

@@ -1,12 +1,114 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head><title>Kullanıcı Ayar Sayfası</title></h:head>
 <h:body>
-	<ui:composition template="/pages/protected/templates/master.xhtml">
-		<ui:define name="divMain">
-			#{bundle.welcomeMessage} :<br/>
-			<h:graphicImage library="images" name="logoReal.png" />
-		</ui:define>	
-	</ui:composition>
+<h:form>
+		<p:growl id="growl" sticky="true" showDetail="true" />
+<p:menubar style="font-size: 18px;" id="menu">
+			<p:menuitem
+				value="Kullanıcı Bilgileri ">
+
+			</p:menuitem>
+			
+			</p:menubar>
+			<p:separator></p:separator>
+			
+	<h:panelGrid id="bilgigiris" columns="2" columnClasses="grid,grid">
+	<f:event listener="#{kullaniciHesapAyarController.validateGuncellemeBilgileri}"
+							type="postValidate" />
+		<h:panelGrid columns="2" columnClasses="label, value">
+			<h:outputLabel value="Kullanıcı Adı:" style="font-weight:bold" />
+
+			<h:outputText rendered="#{!kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.kullaniciAd}" />
+			<p:inputText rendered="#{kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.kullaniciAd}"
+				required="true" />
+
+			<h:outputLabel value="Kullanıcı Mail Adresi:"
+				style="font-weight:bold" />
+
+			<h:outputText rendered="#{!kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.mail}" />
+			<p:inputText id="yeniMail" rendered="#{kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.mail}" required="true" >
+			
+			</p:inputText>
+			
+			<h:outputLabel value="Akademik Unvan:" style="font-weight:bold" />
+
+			<h:outputText rendered="#{!kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.unvan}" />
+			<h:selectOneRadio rendered="#{kullaniciHesapAyarController.editable}"
+	 			value="#{kullaniciHesapAyarController.tip}" required="true">
+				<f:selectItem itemValue="-" itemLabel="-" />
+				<f:selectItem itemValue="Ogrenci" itemLabel="Ogrenci" />
+				<f:selectItem itemValue="Arastırma Grv." itemLabel="Arastırma Grv." />
+				<f:selectItem itemValue="Dr." itemLabel="Dr." />
+				<f:selectItem itemValue="Yar.Doc.Dr." itemLabel="Yar.Doc.Dr." />
+				<f:selectItem itemValue="Doc.Dr." itemLabel="Doc.Dr." />
+				<f:selectItem itemValue="Prof.Dr" itemLabel="Prof.Dr" />
+			</h:selectOneRadio>
+			
+			<h:outputLabel value="Okul:" style="font-weight:bold" />
+			
+			 <h:outputText rendered="#{!kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.okul}" />
+			<p:inputText rendered="#{kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.okul}"
+				required="true" />
+				
+				
+			
+			<h:outputLabel value="Sifre:" style="font-weight:bold" rendered="#{!kullaniciHesapAyarController.editable}"/>
+			
+			<h:outputText rendered="#{!kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.kisi.sifre}" />
+			
+		<h:outputLabel  value="Yeni Sifre:" style="font-weight:bold" rendered="#{kullaniciHesapAyarController.editable}"/>
+			
+			<p:password id="yeniSifre" rendered="#{kullaniciHesapAyarController.editable}"
+				value="#{kullaniciHesapAyarController.resetSifre}">
+				 
+				 </p:password>
+				 
+				
+<h:outputLabel rendered="#{kullaniciHesapAyarController.editable}" value="Yeni Sifre Doğrulama:" style="font-weight:bold" />
+	
+			<p:password rendered="#{kullaniciHesapAyarController.editable}" id="yeniSifreDogrula"
+				value="#{kullaniciHesapAyarController.resetSifreOnay}" />
+				
+<p:commandButton rendered="#{!kullaniciHesapAyarController.editable}"
+					value="Güncelle" update="bilgigiris"
+					action="#{kullaniciHesapAyarController.changeEditable}" />
+		<p:commandButton id="kaydetBtn"
+					rendered="#{kullaniciHesapAyarController.editable}" value="Kaydet"
+					action="#{kullaniciHesapAyarController.changeEditable}"
+					oncomplete="PF('guncellemeonay').show()" >
+					</p:commandButton>
+				<p:commandButton value="Ana Sayfaya Dön" action="#{kullaniciHesapAyarController.anaSayfa}"	/>
+			<p:confirmDialog header="Güncelleme Onayı"
+			widgetVar="guncellemeonay" message="Yaptığınız güncellemeleri onaylıyormusunuz?">
+			
+				<p:commandButton value="Evet, Onaylıyorum" 
+					action="#{kullaniciHesapAyarController.guncelle}"
+					oncomplete="PF('guncellemeonay').hide()" ajax="false" >
+						 				
+					
+					</p:commandButton>
+				<p:commandButton value="Hayır, Onaylamıyorum"
+					onclick="PF('guncellemeonay').hide();" type="button" />
+		
+		</p:confirmDialog>	
+
+		</h:panelGrid>
+			
+	</h:panelGrid>
+	
+</h:form>
 </h:body>
 </html>

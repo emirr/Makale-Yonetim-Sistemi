@@ -25,9 +25,18 @@ public class KullaniciController implements Serializable{
 	// public boolean isLoggedIn()
 	private String kullaniciAd;
 	private String sifre;
+	private String mail;
 	private boolean loggedIn;
 	
 	private Kullanici kullanici;
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
 	public Kullanici getKullanici() {
 		return kullanici;
 	}
@@ -62,11 +71,12 @@ public class KullaniciController implements Serializable{
 	}
 
 	public String login() {
-		kullanici = kullaniciService.findKullaniciByAdSifre(kullaniciAd, sifre);
+//		kullanici = kullaniciService.findKullaniciByAdSifre(kullaniciAd, sifre);
+		kullanici = kullaniciService.findKullaniciByMailSifre(mail, sifre);
 		
 		if (kullanici != null) {
 			loggedIn = true;
-			System.out.println("kullanici ad-sifre:" + kullanici.getKullaniciAd() + "-" + kullanici.getId() + kullanici.getRol().toString());
+			System.out.println("kullanici mail-sifre:" + kullanici.getMail() + "-" + kullanici.getId() + kullanici.getRol().toString());
 //			HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
 //	                .getExternalContext().getSession(false);
 //			session.setAttribute("kullaniciAd", kullaniciAd);
@@ -84,11 +94,11 @@ public class KullaniciController implements Serializable{
 			
 		} else{
 			System.out.println("böyle bir kullanici yok");
-//			 FacesContext.getCurrentInstance().addMessage(
-//	                    null,
-//	                    new FacesMessage(FacesMessage.SEVERITY_WARN,
-//	                            "Gecersiz kullanici adi/sifre",
-//	          "Lütfen gecerli bir kullanici adi/sifre girin."));
+			 FacesContext.getCurrentInstance().addMessage(
+	                    null,
+	                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+	                            "Gecersiz kullanici mail/sifre",
+	          "Lütfen gecerli bir kullanici mail/sifre girin."));
 			urlDuzeltici();
 			return "/pages/public/login.xhtml?faces-redirect=true";
 		}
@@ -100,7 +110,14 @@ public class KullaniciController implements Serializable{
         urlDuzeltici();
         return "/pages/public/login.xhtml?faces-redirect=true";
     }
-	public String urlDuzeltici(){
+	public  String urlDuzeltici(){
+		HttpServletRequest origRequest = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+		String url = origRequest.getRequestURL().toString();
+		//System.out.println("url:" + url);
+		//System.out.println("yeni url:"+url.substring(0, url.length() - origRequest.getRequestURI().length()) + origRequest.getContextPath() + "/");
+		return url.substring(0, url.length() - origRequest.getRequestURI().length()) + origRequest.getContextPath() + "/faces";
+	}
+	public static String urlHandler(){
 		HttpServletRequest origRequest = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
 		String url = origRequest.getRequestURL().toString();
 		//System.out.println("url:" + url);

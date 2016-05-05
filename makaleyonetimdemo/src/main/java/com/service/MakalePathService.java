@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import com.entity.Makale;
 import com.entity.MakalePath;
 import com.entity.Referans;
+import com.util.S3DosyaIslemleri;
 
 
 
@@ -76,6 +77,7 @@ public class MakalePathService extends AbstractService<MakalePath> {
 				mp = em.merge(mp);
 //ÖNEMLÝ---->//--> buraya s3 den silme yapacak metod çaðrýsý eklenmeli.Metod parametre olarak path'i alacak.
 				//deleteFromS3(mp.getPAth()) gibi
+				S3DosyaIslemleri.s3DosyaSilme(mp.getMakalePath());
 				em.remove(mp);
 				em.getTransaction().commit();
 				//return makale.getMakaleYayinTipi().toString();

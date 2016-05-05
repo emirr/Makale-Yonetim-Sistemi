@@ -7,6 +7,12 @@
 	<welcome-file-list>
 		<welcome-file>girisSayfasi.xhtml</welcome-file>
 	</welcome-file-list>
+
+	<filter>
+		<filter-name>AdminFilter</filter-name>
+		<filter-class>com.filter.AdminFilter</filter-class>
+	</filter>
+
 	<filter>
 		<filter-name>LoginFilter</filter-name>
 		<filter-class>com.filter.LoginFilter</filter-class>
@@ -15,10 +21,7 @@
 		<filter-name>LoginFilter</filter-name>
 		<url-pattern>faces/pages/protected/*</url-pattern>
 	</filter-mapping>
-	<filter>
-		<filter-name>AdminFilter</filter-name>
-		<filter-class>com.filter.AdminFilter</filter-class>
-	</filter>
+
 	<filter-mapping>
 		<filter-name>AdminFilter</filter-name>
 		<url-pattern>faces/pages/protected/admin/*</url-pattern>
@@ -57,6 +60,7 @@
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
 		<param-value>Development</param-value>
 	</context-param>
+	
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>
 	</listener>

@@ -62,8 +62,10 @@ public class ReferansService extends AbstractService<Referans> {
 				referans.setSonSayfaNo(sonSayfaNo);
 			// Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
-			makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(),
-					"referans", makale.getMakaleAdi() + "referans güncelleme"));
+			if(yil != 0 || sayi != 0 || ciltNo != 0 || basSayfaNo != 0 || sonSayfaNo != 0 ){
+				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(),
+					"referans", makale.getMakaleAdi() + "referans bilgileri güncellendi."));
+			}
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {
@@ -71,7 +73,26 @@ public class ReferansService extends AbstractService<Referans> {
 			}
 		}
 	}
+	public List<Referans> findReferans(long yil, int sayi, int ciltNo, Dergi d){
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			Query query = em.createQuery(
+					"select r from com.entity.Referans r WHERE r.yil=:refyil and r.sayi=:refsayi and r.ciltNo=:refcilt and r.DERGI.id=:d_Id");
+			query.setParameter("refyil", yil);
+			query.setParameter("refsayi", sayi);
+			query.setParameter("refcilt", ciltNo);
+			query.setParameter("d_Id", d.getId());
+			return query.getResultList();
 
+		} catch (NoResultException e) {
+			System.out.println("null dönecek");
+			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
 	public Referans findReferans(long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo, Dergi d) {
 		EntityManager em = getEmf().createEntityManager();
 		try {

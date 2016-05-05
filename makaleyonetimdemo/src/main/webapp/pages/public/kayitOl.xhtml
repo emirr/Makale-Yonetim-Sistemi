@@ -1,12 +1,91 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" >
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Makale Ekleme</title>
+
+</h:head>
 <h:body>
-	<ui:composition template="/pages/protected/templates/master.xhtml">
-		<ui:define name="divMain">
-			#{bundle.welcomeMessage} :<br/>
-			<h:graphicImage library="images" name="logoReal.png" />
-		</ui:define>	
-	</ui:composition>
+	<h:form id="outerform" >
+
+
+		<p:panel header="Makale Tip-Yazar-Veri Yüklemeleri ">
+
+
+
+			<h:panelGrid id="ikinciadim" columns="1" columnClasses="label, value">
+
+				<h:panelGrid>
+					<h:panelGrid columns="2" columnClasses="label, value">
+						<h:outputLabel value="Yayın Tipi:" style="font-weight:bold" />
+						<h:selectOneRadio
+							disabled="#{makaleEkleController.tipYazarOlusturuldu}"
+							value="#{makaleEkleController.makaleTip}" required="true">
+							<p:ajax event="blur" update="outtip" />
+							<f:selectItem itemValue="Tez" itemLabel="Tez" />
+							<f:selectItem itemValue="Kitap" itemLabel="Kitap " />
+							<f:selectItem itemValue="Bildiri" itemLabel="Bildiri " />
+							<f:selectItem itemValue="Konferans" itemLabel="Konferans" />
+						</h:selectOneRadio>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" columnClasses="label, value">
+					
+				</h:panelGrid>
+
+				
+	  				 <p:commandButton value="Upload" action="#{makaleEkleController.fUpd2}"  />
+					 
+				
+				<h:panelGrid columns="2" columnClasses="label, value">
+					<p:commandButton value="Tip-Yazar Kaydet" type="button"
+						onclick="PF('confirmDialog8').show()"></p:commandButton>
+					<p:commandButton value="Ana Sayfaya Dön"
+						onclick="PF('confirmDialog3').show()"></p:commandButton>
+				</h:panelGrid>
+
+				<p:confirmDialog header="Ana Sayfaya Dönmek İstiyormusunuz?"
+					message="Eğer ana sayfaya dönerseniz kaydettiğiniz verileri kaybedeceksiniz.
+				Ana sayfaya dönmek istediğinizden emin misiniz?"
+					severity="alert" widgetVar="confirmDialog3">
+					<p:commandButton value="Evet, Onaylıyorum"
+						action="#{makaleEkleController.silme}" immediate="true"
+						oncomplete="PF('confirmDialog3').hide()" ajax="false" />
+					<p:commandButton value="Hayır, Onaylamıyorum"
+						onclick="PF('confirmDialog3').hide();" type="button" />
+
+				</p:confirmDialog>
+
+				<p:confirmDialog header="Tip-Yazar bilgilerini onaylıyormusunuz?"
+					widgetVar="confirmDialog8">
+					<h:panelGrid columns="2" columnClasses="label, value">
+
+						<h:outputLabel value="Yayın Tipi:" style="font-weight:bold" />
+						<h:outputText id="outtip"
+							value="#{makaleEkleController.makaleTip}" />
+
+						<h:outputLabel id="outyzr" value="Yazarlar:"
+							style="font-weight:bold" />
+						<h:outputText value="#{makaleEkleController.yazarAdlari}" />
+					</h:panelGrid>
+					<p:commandButton value="Evet, Onaylıyorum"
+						action="#{makaleEkleController.tipYazarOlustur}"
+						oncomplete="PF('confirmDialog8').hide()" ajax="false"
+						update="ikinciadim" />
+					<p:commandButton value="Hayır, Onaylamıyorum"
+						onclick="PF('confirmDialog8').hide();" type="button" />
+				</p:confirmDialog>
+
+			</h:panelGrid>
+
+
+
+
+		</p:panel>
+	</h:form>
 </h:body>
 </html>

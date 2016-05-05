@@ -88,7 +88,8 @@ public class YazarService extends AbstractService<Yazar> {
 				yazar.setYazarAdi(yazarAd);
 			Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
-			makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "yazar",makale.getMakaleAdi() + "yazar ad güncelleme"));
+			if(yazarAd != null)
+				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "yazar",makale.getMakaleAdi() + "yazar adý güncellendi"));
 			em.getTransaction().commit();
 		}finally {
 			if (em != null) {

@@ -30,7 +30,7 @@ public class MakalePath implements Serializable{
 	}
 	public MakalePath(int referansId) {
 		super();
-		this.makalePath = "//referansPath"+referansId;
+		this.makalePath = "\\refPath"+referansId;
 	}
 	public void setId(int id) {
 		this.id = id;
@@ -41,4 +41,9 @@ public class MakalePath implements Serializable{
 	public void setMakalePath(String makalePath) {
 		this.makalePath = makalePath;
 	}
+	@Override
+	public String toString() {
+		return "MakalePath [makalePath=" + makalePath + "]";
+	}
+	
 }

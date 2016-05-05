@@ -101,15 +101,15 @@ public class MakaleYayinTipi implements Serializable {
 	@Override
 	public String toString() {
 		if (isBildiri == true) {
-			return "bildiri";
+			return "Bildiri";
 		} else {
 			if (isKonferans == true) {
-				return "konferans";
+				return "Konferans";
 			} else {
 				if (isTez == true) {
-					return "tez";
+					return "Tez";
 				} else
-					return "kitap";
+					return "Kitap";
 			}
 		}
 

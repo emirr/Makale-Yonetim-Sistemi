@@ -9,6 +9,7 @@
 		<managed-bean-class>com.controller.KullaniciController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>kullaniciAnaSayfaController</managed-bean-name>
 		<managed-bean-class>com.controller.KullaniciAnaSayfaController</managed-bean-class>
@@ -19,4 +20,38 @@
 			<value>#{kullaniciController}</value>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>kullaniciHesapAyarController</managed-bean-name>
+		<managed-bean-class>com.controller.KullaniciHesapAyarController</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+		<managed-property>
+			<property-name>kullaniciController</property-name>
+			<property-class>com.controller.KullaniciController</property-class>
+			<value>#{kullaniciController}</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>kullaniciEtkinlikController</managed-bean-name>
+		<managed-bean-class>com.controller.KullaniciEtkinlikController</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+		<managed-property>
+			<property-name>kullaniciController</property-name>
+			<property-class>com.controller.KullaniciController</property-class>
+			<value>#{kullaniciController}</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>makaleEkleController</managed-bean-name>
+		<managed-bean-class>com.controller.MakaleEkleController</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+		<managed-property>
+			<property-name>kullaniciController</property-name>
+			<property-class>com.controller.KullaniciController</property-class>
+			<value>#{kullaniciController}</value>
+		</managed-property>
+	</managed-bean>
+	
 </faces-config>

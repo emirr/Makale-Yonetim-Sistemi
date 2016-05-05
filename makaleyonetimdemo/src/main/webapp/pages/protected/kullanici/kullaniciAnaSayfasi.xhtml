@@ -4,27 +4,355 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-	<h:head><title>Makale Listesi</title></h:head>
+<h:head>
+	<title>Ana Sayfa</title>
+</h:head>
 <h:body>
+
 	<h:form>
-		<p:panel header="Ana Sayfa bu bir kullanici sayfasidir">
-			<p>
-				<h:outputText value="hosgeldin , #{kullaniciController.kullanici}!" />
-			</p>
-			<p:dataTable var="makale" value="#{kullaniciAnaSayfaController.makaleler}">
+
+		<p:menubar style="font-size: 18px;" id="menu">
+			<p:menuitem
+				value="Merhaba , #{kullaniciController.kullanici.kullaniciAd}!">
+
+			</p:menuitem>
+
+
+			<f:facet name="options">
+				<p:commandButton type="button" title="Çıkış" icon="ui-icon-power">
+					<p:confirm header="Güvenli Çıkış" message="Emin misiniz?"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+				<p:confirmDialog global="true">
+					<p:commandButton value="Evet" styleClass="ui-confirmdialog-yes"
+						icon="ui-icon-check" action="#{kullaniciController.logout}" />
+					<p:commandButton value="Hayır" styleClass="ui-confirmdialog-no"
+						icon="ui-icon-close" />
+				</p:confirmDialog>
+			</f:facet>
+		</p:menubar>
+
+		<p:separator />
+
+		<p:layout style="width:1350px;height:500px;" resize="false">
+			<p:layoutUnit position="west" style="height:300px;overflow:hidden;"
+				resize="false" size="250">
+
+				<p:menu styleClass="menu">
+					<p:menuitem value="Makale Ekle"
+						outcome="makaleEkleme.xhtml?faces-redirect=true" />
+					<p:menuitem value="Kullanıcı Ayarları" outcome="kullaniciHesapAyarlari.xhtml?faces-redirect=true"/>
+
+					<p:menuitem value="Etkinlik Görüntüleme" outcome="etkinlikGoruntuleme.xhtml?faces-redirect=true" />
+					<p:menuitem value="" style="height:325px;"></p:menuitem>
+
+
+				</p:menu>
+
+
+
+			</p:layoutUnit>
+			<p:layoutUnit position="center" resizable="false">
+		
+
+				<p:dataTable id="dtables" var="makaleAndMetaEntry"
+					value="#{kullaniciAnaSayfaController.makaleAndMetaSet.entrySet().toArray()}"
+					rows="10" paginator="true"
+					filteredValue="#{kullaniciAnaSayfaController.filteredMakaleler}">
 				
+					<p:column id="idColumn" rendered="false" headerText="Makale Id">
+
+						<h:outputText value="#{makaleAndMetaEntry.key.id}" />
+
+					</p:column>
+
+					<p:column headerText="Makale Ad"
+						filterBy="#{makaleAndMetaEntry.key.makaleAdi}"
+						filterMatchMode="contains">
+
+
+						<h:outputText value="#{makaleAndMetaEntry.key.makaleAdi}" />
+
+
+					</p:column>
+					<p:column headerText="Yayın Tipi"
+						filterBy="#{makaleAndMetaEntry.key.makaleYayinTipi}"
+						filterMatchMode="contains">
+						<h:outputText value="#{makaleAndMetaEntry.key.makaleYayinTipi}" />
+					</p:column>
+					<p:column headerText="Konu"
+						filterBy="#{makaleAndMetaEntry.value.makaleKonu}"
+						filterMatchMode="contains">
+						<h:outputText value="#{makaleAndMetaEntry.value.makaleKonu}" />
+
+					</p:column>
+					<p:column headerText="Puan">
+						<h:outputText value="#{makaleAndMetaEntry.value.makalePuan}" />
+					</p:column>
+					<p:column>
+						<p:column style="width:32px;text-align: center">
+
+							<p:commandButton update="@widgetVar(makaleDialog1)"
+								action="#{kullaniciAnaSayfaController.setDetaylar(makaleAndMetaEntry.key.id)}"
+								oncomplete="PF('makaleDialog1').show()" icon="ui-icon-search"
+								title="Makale Detay Görüntüle">
+
+							</p:commandButton>
+						</p:column>
+						
+						<p:column>
+							<p:commandButton oncomplete="PF('kullaniciSecim').show()" 	action="#{kullaniciAnaSayfaController.paylasilabilirKisiler(makaleAndMetaEntry.key.id)}"
+							icon="ui-icon-transferthick-e-w" title="Paylaş">
+							</p:commandButton>
+						</p:column>
+						
+						<p:column>
+							<p:commandButton oncomplete="PF('makaleOku').show()" icon="ui-icon-note" title="Oku">
+							
+							</p:commandButton>
+						</p:column>
+						
+						<p:column>
+							<p:commandButton oncomplete="PF('makaleSilme').show()"  action="#{kullaniciAnaSayfaController.setMakaleId(makaleAndMetaEntry.key.id)}" icon="ui-icon-trash" title="Sil">
+							
+							</p:commandButton>
+						</p:column>
+
+					</p:column>
+							
+					
+				</p:dataTable>
+			
+
+
+
+			</p:layoutUnit>
+
+		</p:layout>
+		
+		<p:confirmDialog header="Makale Paylaşımı" widgetVar="kullaniciSecim" message="Makale Paylaşabileceğiniz Kullanıcılar" >
+		<p:dataTable id="kisisecimtables" var="kisi"
+				 	value="#{kullaniciAnaSayfaController.hazirList}"
+					rows="10" paginator="true" rowKey ="#{kisi.id}" selection="#{kullaniciAnaSayfaController.selectedKullaniciList}"
+					filteredValue="#{kullaniciAnaSayfaController.filteredKullanicilar}">
+				<p:ajax event="rowSelectCheckbox" listener="#{kullaniciAnaSayfaController.kullaniciSecim}"   /> 
+				<p:column selectionMode="multiple" style="width:18px" />
+					<p:column id="kisiIdColumn" rendered="false" headerText="Kullanıcı Id">
+
+						<h:outputText value="#{kisi.id}" />
+
+					</p:column>
+
+					<p:column headerText="Kullanici Adi" 
+						filterBy="#{kisi.kullaniciAd}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{kisi.kullaniciAd}" />
+
+
+					</p:column>
+					<p:column headerText="Unvanı" 
+						filterBy="#{kisi.unvan}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{kisi.unvan}" />
+
+
+					</p:column>
+					
+					<p:column headerText="Okulu" 
+						filterBy="#{kisi.okul}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{kisi.okul}" />
+
+
+					</p:column>
+					</p:dataTable>
+					
+		<p:commandButton id="paylasBtn"
+					value="Paylaş"
+					 update="seciliKisiler"
+					oncomplete="PF('paylasimonay').show()" >
+					</p:commandButton>
+		
+		</p:confirmDialog>
+		
+		<p:confirmDialog header="Paylaşım Onayı"
+			widgetVar="paylasimonay" message="Seçtiğiniz kişilerle makale paylaşımını onaylıyormusunuz?">
+			
+			
+			<p:dataList id="seciliKisiler" value="#{kullaniciAnaSayfaController.selectedKullaniciList}" var="kisiler">
+                
+               secilen kisinin adi: #{kisiler.kullaniciAd}
+               secilen kisinin unvan: #{kisiler.unvan}
+               secilen kisinin okulu : #{kisiler.unvan}
+            </p:dataList>
+			
+				<p:commandButton value="Evet, Onaylıyorum" 
+					action="#{kullaniciAnaSayfaController.makalePaylas}"
+					oncomplete="PF('paylasimonay').hide()" ajax="false" >
+						 				
+					
+					</p:commandButton>
+				<p:commandButton value="Hayır, Onaylamıyorum" action="#{kullaniciAnaSayfaController.resetSeciliKisiler}"
+					onclick="PF('paylasimonay').hide();" type="button" />
+		
+		</p:confirmDialog>
+		
+		<p:confirmDialog header="Makaleyi Silme İşlemi" message="Makaleyi Silmek İstediğinizi Onaylıyormusunuz?" widgetVar="makaleSilme">
+		
+					
+		<p:commandButton value="Evet, Onaylıyorum" 
+		action="#{kullaniciAnaSayfaController.makaleSilme}"
+		oncomplete="PF('makaleSilme').hide()" ajax="false" >
+			 				
+		
+		</p:commandButton>
+	<p:commandButton value="Hayır, Onaylamıyorum" 
+		onclick="PF('makaleSilme').hide();" type="button" />
+		
+		</p:confirmDialog>
+		
+
+		<p:confirmDialog  header="Makale Detayları" message="Makaleye Ait Tüm Bilgiler" widgetVar="makaleDialog1" height="10">
+
+		<h:panelGrid id="innerconfirmation2">
+			<h:panelGrid id="innerconfirmation1" columns="2" columnClasses="grid,grid">
+			
+				<h:panelGrid columns="2" columnClasses="label, value" >
+
+					<h:outputLabel value="Makale Adı:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.makale.makaleAdi}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.makale.makaleAdi}" />
+
+					<h:outputLabel value="AnahtarKelime:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.makale.anahtarKelimeler}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.makale.anahtarKelimeler}" />
+						
+					<h:outputLabel value="Makale Konu:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.metadata.makaleKonu}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.metadata.makaleKonu}" />
+
+					<h:outputLabel value="Makale Puan:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.metadata.makalePuan}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.metadata.makalePuan}" />
+						
+					<h:outputLabel value="Makale Not:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.metadata.makaleNot}" />
+					<p:inputTextarea rows="3" cols="30"
+						rendered="#{kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.metadata.makaleNot}" />
+					
+					<h:outputLabel value="Yayın Tipi:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.makale.makaleYayinTipi}" />
+						<h:selectOneRadio
+						rendered="#{kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.tip}">
+						<f:selectItem itemValue="Tez" itemLabel="Tez" />
+						<f:selectItem itemValue="Kitap" itemLabel="Kitap " />
+						<f:selectItem itemValue="Bildiri" itemLabel="Bildiri " />
+						<f:selectItem itemValue="Konferans" itemLabel="Konferans" />
+					</h:selectOneRadio>
+					
+					
+						</h:panelGrid>
+						
+<h:panelGrid columns="2" columnClasses="label, value" >
+<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.dergiGuncellenebilir}"  value="Dergi Adı:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.dergi.dergiAdi}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.dergiGuncellenebilir}"
+						value="#{kullaniciAnaSayfaController.dergi.dergiAdi}" />
+						
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Yayın Yılı:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.yil}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+						value="#{kullaniciAnaSayfaController.referans.yil}" />
+
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Dergi Sayı:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.sayi}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+						value="#{kullaniciAnaSayfaController.referans.sayi}" />
+
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Dergi Cilt No:" style="font-weight:bold"/>
+
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.ciltNo}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+						value="#{kullaniciAnaSayfaController.referans.ciltNo}" />
+
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Baş No:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.basSayfaNo}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+						value="#{kullaniciAnaSayfaController.referans.basSayfaNo}" />
+
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Son Sayfa No:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.sonSayfaNo}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+					 	value="#{kullaniciAnaSayfaController.referans.sonSayfaNo}" />
+
+					
+						
+					
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat}" value="Yazarlar:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.yazarList}" />
+				</h:panelGrid>
 				
-				<p:column headerText="Makale Ad">
-					<h:outputText value="#{makale.makaleAdi}" />
-				</p:column>
-				<p:column headerText="Yayın Tipi">
-					<h:outputText value="#{makale.makaleYayinTipi}" />
-				</p:column>
-				
-			</p:dataTable>
-			<p:commandButton value="Logout"
-				action="#{kullaniciController.logout}" />
-		</p:panel>
+			</h:panelGrid>
+			
+				<p:commandButton rendered="#{!kullaniciAnaSayfaController.editStat}"
+					value="Güncelle" update="innerconfirmation2"
+					action="#{kullaniciAnaSayfaController.changeEditable}" />
+
+				<p:commandButton id="kaydetBtn"
+					rendered="#{kullaniciAnaSayfaController.editStat}" value="Kaydet"
+					action="#{kullaniciAnaSayfaController.changeEditable}"
+					oncomplete="PF('guncellemeonay').show()" >
+					</p:commandButton>
+
+			</h:panelGrid>
+
+
+		</p:confirmDialog>
+		
+		
+	
+		<p:confirmDialog header="Güncelleme Onayı"
+			widgetVar="guncellemeonay" message="Yaptığınız güncellemeleri kaydetmek istediğinize eminmisiniz?">
+			
+				<p:commandButton value="Evet, Onaylıyorum" update="dtables"
+					action="#{kullaniciAnaSayfaController.guncelle}"
+					oncomplete="PF('guncellemeonay').hide()" ajax="false" >
+						 				
+					
+					</p:commandButton>
+				<p:commandButton value="Hayır, Onaylamıyorum"
+					onclick="PF('guncellemeonay').hide();" type="button" />
+		
+		</p:confirmDialog>
 	</h:form>
 </h:body>
 </html>

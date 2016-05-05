@@ -61,13 +61,14 @@ public class MakaleMetadataService extends AbstractService<MakaleMetadata> {
 				etkinlikBilgi+=",Puan";
 			}
 			if(makaleKonu != null){
-				metadata.setMakaleNot(makaleKonu);	
+				metadata.setMakaleKonu(makaleKonu);	
 				etkinlikBilgi+=",Konu";
 			}
 			
 			//Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
-			kullanici.getEtkinlikler().add(ets.createEtkinlik(kullaniciId, "kullanici",etkinlikBilgi + " bilgileri güncellendi"));
+			if(makaleKonu != null || makaleNot != null || makalePuan != 0)
+				kullanici.getEtkinlikler().add(ets.createEtkinlik(kullaniciId, "kullanici","makale metadata" +etkinlikBilgi + " bilgileri güncellendi"));
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {

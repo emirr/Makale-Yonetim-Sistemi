@@ -2,20 +2,20 @@ package com.filter;
 
 import java.io.IOException;
 
+import javax.faces.application.ResourceHandler;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.controller.KullaniciController;
 
 public class LoginFilter extends AbstractFilter implements Filter {
-
+	//private static List<String> allowedURIs;
 	/**
 	 * Creates a new instance of LoginFilter
 	 */
@@ -34,7 +34,8 @@ public class LoginFilter extends AbstractFilter implements Filter {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
-
+		boolean resourceRequest = req.getRequestURI().startsWith(req.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
+		System.out.println(req.getContextPath() + ResourceHandler.RESOURCE_IDENTIFIER + "/");
 		KullaniciController kullaniciControl = (KullaniciController) req.getSession()
 				.getAttribute("kullaniciController");
 		// String reqURI = req.getRequestURI();

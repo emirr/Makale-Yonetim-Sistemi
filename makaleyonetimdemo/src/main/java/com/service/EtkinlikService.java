@@ -1,7 +1,10 @@
 package com.service;
 
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.entity.Etkinlik;
@@ -22,8 +25,9 @@ public class EtkinlikService extends AbstractService<Etkinlik> {
 			Etkinlik etkinlik = new Etkinlik(etkinlikTabloAdi,etkinlikTuru,etkinlikZamani,kullanici);
 			
 			em.persist(etkinlik);
-			System.out.println("etkinlik servicede:"+etkinlik.getId());
 			em.getTransaction().commit();
+			System.out.println("etkinlik servicede:"+etkinlik.getId());
+			
 			return etkinlik;
 		} finally {
 			if (em != null) {
@@ -31,5 +35,21 @@ public class EtkinlikService extends AbstractService<Etkinlik> {
 			}
 		}
 	}
-
+	public List<Etkinlik> retrieveEtkinlikByIdDesc(int kId) {
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			// Kullanici kullanici = em.find(Kullanici.class, ad);
+			// return kullanici;
+			Query query = em.createQuery("select e from com.entity.Etkinlik e JOIN e.kullanici k where k.id=e.kullanici.id and k.id=:k_Id ORDER BY e.id DESC");
+			query.setParameter("k_Id", kId);
+			return  query.getResultList();
+		}catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		}  finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
 }

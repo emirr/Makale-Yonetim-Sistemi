@@ -112,6 +112,10 @@ public class KullaniciService extends AbstractService<Kullanici> {
 				kullanici.setKullaniciAd(ad);
 				etkinlikBilgi += ",ad";
 			}
+			if (okul != null) {
+				kullanici.setOkul(okul);
+				etkinlikBilgi += ",okul";
+			}
 			// Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
 			kullanici.getEtkinlikler()
@@ -212,7 +216,7 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			}
 		}
 	}
-
+	
 	// test edildi.
 	public List<Kullanici> findKullaniciByAd(String ad) {
 		EntityManager em = getEmf().createEntityManager();
@@ -249,6 +253,26 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			}
 		}
 	}
+	
+	public Kullanici findKullaniciByMailSifre(String mail, String sifre) {
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			// Kullanici kullanici = em.find(Kullanici.class, ad);
+			// return kullanici;
+			Query query = em.createQuery("select k from com.entity.Kullanici k WHERE k.mail=:mail and k.sifre=:sifre");
+			query.setParameter("mail", mail);
+			query.setParameter("sifre", sifre);
+			return (Kullanici) query.getSingleResult();
+		}catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		}  finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	
 	// denenecek
 	public Kullanici findKullaniciByMail(String mail) {
 		EntityManager em = getEmf().createEntityManager();
@@ -283,7 +307,23 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			}
 		}
 	}
+	public List<Kullanici> listDigerKullanicilar(int kId) {
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			Query query = em.createQuery("SELECT k FROM com.entity.Kullanici k WHERE k.isOnayli=:onayDurumu and k.id!=:KID");
+			query.setParameter("onayDurumu", true);
+			query.setParameter("KID", kId);
 
+			return query.getResultList();
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
 	// test edildi.
 	public List<Kullanici> listOnayBekleyenKullanicilar() {
 		EntityManager em = getEmf().createEntityManager();
