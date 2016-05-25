@@ -1,18 +1,27 @@
 package com.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import javax.servlet.http.HttpServletRequest;
 //import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
 import com.entity.Kullanici;
+import com.entity.Referans;
 //import com.entity.Rol;
 import com.service.KullaniciService;
+import com.service.ReferansService;
 
 @ManagedBean//(name = "kullaniciController")
 //@Named("kullaniciController")
@@ -27,7 +36,22 @@ public class KullaniciController implements Serializable{
 	private String sifre;
 	private String mail;
 	private boolean loggedIn;
-	
+//	private String okul, unvan;
+//	public String getOkul() {
+//		return okul;
+//	}
+//
+//	public void setOkul(String okul) {
+//		this.okul = okul;
+//	}
+//
+//	public String getUnvan() {
+//		return unvan;
+//	}
+//
+//	public void setUnvan(String unvan) {
+//		this.unvan = unvan;
+//	}
 	private Kullanici kullanici;
 	public String getMail() {
 		return mail;
@@ -93,12 +117,12 @@ public class KullaniciController implements Serializable{
 				return "/pages/protected/kullanici/kullaniciAnaSayfasi.xhtml?faces-redirect=true";
 			
 		} else{
-			System.out.println("böyle bir kullanici yok");
+			System.out.println("bÃ¶yle bir kullanici yok");
 			 FacesContext.getCurrentInstance().addMessage(
-	                    null,
+	                    "GirisOnayId",
 	                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
 	                            "Gecersiz kullanici mail/sifre",
-	          "Lütfen gecerli bir kullanici mail/sifre girin."));
+	          "LÃ¼tfen gecerli bir kullanici mail/sifre girin."));
 			urlDuzeltici();
 			return "/pages/public/login.xhtml?faces-redirect=true";
 		}
@@ -124,4 +148,5 @@ public class KullaniciController implements Serializable{
 		//System.out.println("yeni url:"+url.substring(0, url.length() - origRequest.getRequestURI().length()) + origRequest.getContextPath() + "/");
 		return url.substring(0, url.length() - origRequest.getRequestURI().length()) + origRequest.getContextPath() + "/faces";
 	}
+
 }

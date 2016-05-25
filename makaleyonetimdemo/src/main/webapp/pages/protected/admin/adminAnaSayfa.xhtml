@@ -8,12 +8,271 @@
 <h:body>
 
     <h:form>
-        <p:panel header="Ana Sayfa">
-            <p>
-                <h:outputText
-                    value="hosgeldin , #{kullaniciController.kullanici}!" />
-            </p>
+        <p:panel header="Admin Ana Sayfa">
+           <p:dataTable id="dtables" var="hatalireferanslar" 
+					value="#{adminAnaSayfaController.hataliReferanslar}"
+					rows="4" paginator="true"
+					filteredValue="#{adminAnaSayfaController.filteredReferanslar}">
+					<f:facet name="header">
+           Hata Bildirimi Yapılmış Referanslar
+        </f:facet>
+					<p:column headerText="Referans Adı"
+						filterBy="#{hatalireferanslar.referansad}"
+						filterMatchMode="contains">
 
+						<h:outputText value="#{hatalireferanslar.referansad}" />
+					</p:column>
+					<p:column>
+					<p:commandButton immediate="true" value="Hata Mesajını Görüntüle" oncomplete="PF('hatamsggoruntule').show()" update="@widgetVar(hatamsggoruntule)"	action="#{adminAnaSayfaController.setReferansMsg(hatalireferanslar.referansad)}" >
+							</p:commandButton>
+					</p:column>
+					<p:column>
+					<p:commandButton immediate="true" value="Referansı Düzelt" oncomplete="PF('hatalirefgoruntule').show()" update="@widgetVar(hatalirefgoruntule)"	action="#{adminAnaSayfaController.setReferansDetaylari(hatalireferanslar.referansad)}">
+							</p:commandButton>
+					</p:column>
+		</p:dataTable>
+		
+		<p:confirmDialog header="Referans Hata Mesajı"  widgetVar="hatamsggoruntule">
+		<h:panelGrid>
+		<h:outputText 
+						value="#{adminAnaSayfaController.refHatamsg}" />
+				</h:panelGrid>	
+		<p:commandButton value="Tamam" 
+		
+		oncomplete="PF('hatamsggoruntule').hide()" ajax="false" />
+			 				
+		</p:confirmDialog>
+		
+	<p:confirmDialog header="Hatalı Referans Detayları"  widgetVar="hatalirefgoruntule">
+				<h:panelGrid id="innerr">
+							<h:panelGrid>
+						<h:outputLabel value="Eser Adı: *" style="font-weight:bold"/>
+						<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.referansad}"> </h:outputText>
+						<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+						 
+							value="#{adminAnaSayfaController.referansAd}" 
+							 >
+							
+						</p:inputText>
+						</h:panelGrid>
+							
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.makale}">	
+							<h:outputLabel
+								
+								value="Dergi Adı: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.dergiad}"> </h:outputText>
+							<p:inputText id="dergiAd"
+								rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.dergiad}" required="true"
+								label="Dergiadi"
+								>
+							</p:inputText>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.bildiri}" >
+							<h:outputLabel
+								
+								value="Konferans Adı: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.konferansad}"> </h:outputText>
+							<p:inputText id="konferansAd"
+								rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.konferansad}"
+								required="true" label="konfadi">
+							</p:inputText>
+							
+							</h:panelGrid>
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.makale or adminAnaSayfaController.makaleyayintipi.bildiri}">
+							<h:outputLabel
+								
+								value="Sayı: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.sayi}"> </h:outputText>
+							<p:inputText id="dergiSayi" rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.sayi}" required="true"
+								label="Dergisayi">
+							</p:inputText>
+							</h:panelGrid>
+							<h:panelGrid>
+							<h:outputLabel value="Yıl: *" style="font-weight:bold"/>
+							<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.yil}"> </h:outputText>
+							<p:inputText id="dergiYil" 
+								rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.yil}" 
+								label="Dergiyil">
+							</p:inputText>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.makale}">
+							<h:outputLabel
+								
+								value="CiltNo: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.ciltNo}"> </h:outputText>
+							<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.ciltNo}" required="true"
+								label="DergiciltNo">
+							</p:inputText>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{(adminAnaSayfaController.makaleyayintipi.makale or adminAnaSayfaController.makaleyayintipi.bildiri)}">
+							<h:panelGrid columns="2" columnClasses="label, value" >
+							<h:outputLabel 
+								value="Baş Sayfa No: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.basSayfaNo}"> </h:outputText>
+							<p:inputText id="basSayfaNo" rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.basSayfaNo}"
+								required="true" label="basSayfaNo">
+							</p:inputText>
+							</h:panelGrid>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{(adminAnaSayfaController.makaleyayintipi.makale or adminAnaSayfaController.makaleyayintipi.bildiri)}">
+							<h:panelGrid columns="2" columnClasses="label, value" >
+							<h:outputLabel 
+								value="Son Sayfa No: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.sonSayfaNo}"> </h:outputText>
+							<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.sonSayfaNo}"
+								required="true" label="sonSayfaNo">
+							</p:inputText>
+							</h:panelGrid>
+							</h:panelGrid>
+							
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.tez or adminAnaSayfaController.makaleyayintipi.bildiri}">
+						<h:panelGrid columns="2" columnClasses="label, value" >
+							<h:outputText 
+								value="Yer: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.yer}"> </h:outputText>
+							<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.yer}" required="true"
+								>
+								
+							</p:inputText>
+							</h:panelGrid>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.tez or adminAnaSayfaController.makaleyayintipi.bildiri}">
+						<h:panelGrid columns="2" columnClasses="label, value" >
+							<h:outputText 
+								
+								value="Ay: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.ay}"> </h:outputText>
+							<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.ay}" required="true"
+								>
+								
+							</p:inputText>
+							</h:panelGrid>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.tez}">
+							<h:outputText
+								
+								value="Kurum adı: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.kurumad}" />
+							<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.kurumad}" required="true"
+								label="kurumad">
+								
+							</p:inputText>
+							</h:panelGrid>
+							<h:panelGrid rendered="#{adminAnaSayfaController.makaleyayintipi.kitap}">
+							<h:outputText
+								
+								value="Yayıncı: *" style="font-weight:bold"/>
+								<h:outputText rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="#{adminAnaSayfaController.referans2.kitapevi}">
+								</h:outputText>
+							<p:inputText rendered="#{adminAnaSayfaController.duzeltilebilir}"
+								value="#{adminAnaSayfaController.referans2.kitapevi}" 
+								required="true" label="yayinci"
+								>
+								</p:inputText>
+							</h:panelGrid>
+							
+					<p:commandButton rendered="#{!adminAnaSayfaController.duzeltilebilir}" value="Düzelt" 
+		action="#{adminAnaSayfaController.duzeltme}"
+		 update="innerr" />
+							
+				<p:commandButton value="Tamam" rendered="#{adminAnaSayfaController.duzeltilebilir}"
+		action="#{adminAnaSayfaController.referansHataDuzelt}"
+		oncomplete="PF('hatalirefgoruntule').hide()" ajax="false" />			
+		
+		</h:panelGrid>			
+	</p:confirmDialog>
+	
+											    
+	
+		<p:dataTable id="dtables2" var="onayBekleyenler" 
+					value="#{adminAnaSayfaController.onayBekleyenKullaniciList}"
+					rows="4" paginator="true"
+					filteredValue="#{adminAnaSayfaController.filteredKullanicilar}">
+					<f:facet name="header">
+					
+           Onay Bekleyen Kullanıcılar
+        </f:facet>
+					<p:column headerText="Kullanici Adi" 
+						filterBy="#{onayBekleyenler.kullaniciAd}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{onayBekleyenler.kullaniciAd}" />
+
+
+					</p:column>
+					<p:column headerText="Unvanı" 
+						filterBy="#{onayBekleyenler.unvan}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{onayBekleyenler.unvan}" />
+
+
+					</p:column>
+					
+					<p:column headerText="Kurumu" 
+						filterBy="#{onayBekleyenler.okul}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{onayBekleyenler.okul}" />
+
+
+					</p:column>
+					<p:column>
+					<p:commandButton immediate="true" value="Kullanıcıyı Onayla" 	action="#{adminAnaSayfaController.kullaniciyaOnayVer(onayBekleyenler.id)}">
+							</p:commandButton>
+					</p:column>
+		</p:dataTable>
+		
+		
+		
+		<p:dataTable id="dtables3" var="silinecekler" 
+					value="#{adminAnaSayfaController.onayliKullaniciList}"
+					rows="4" paginator="true"
+					filteredValue="#{adminAnaSayfaController.filteredKullanicilar}">
+					<f:facet name="header">
+           Onaylı Kullanıcılar
+        </f:facet>
+					<p:column headerText="Kullanici Adi" 
+						filterBy="#{silinecekler.kullaniciAd}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{silinecekler.kullaniciAd}" />
+
+
+					</p:column>
+					<p:column headerText="Unvanı" 
+						filterBy="#{silinecekler.unvan}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{silinecekler.unvan}" />
+
+
+					</p:column>
+					
+					<p:column headerText="Kurumu" 
+						filterBy="#{silinecekler.okul}"
+						filterMatchMode="contains">
+
+						<h:outputText value="#{silinecekler.okul}" />
+
+
+					</p:column>
+					<p:column>
+					<p:commandButton immediate="true" value="Kullanıcıyı Sil" 	action="#{adminAnaSayfaController.kullaniciSil(silinecekler.id)}">
+							</p:commandButton>
+					</p:column>
+		</p:dataTable>
+	
             <p:commandButton value="Logout"
                 action="#{kullaniciController.logout}" />
         </p:panel>

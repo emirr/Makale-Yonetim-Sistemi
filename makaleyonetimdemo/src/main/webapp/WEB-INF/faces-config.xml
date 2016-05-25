@@ -9,11 +9,26 @@
 		<managed-bean-class>com.controller.KullaniciController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>kayitController</managed-bean-name>
+		<managed-bean-class>com.controller.KayitController</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>adminAnaSayfaController</managed-bean-name>
+		<managed-bean-class>com.controller.AdminAnaSayfaController</managed-bean-class>
+		<managed-bean-scope>view</managed-bean-scope>
+		<managed-property>
+			<property-name>kullaniciController</property-name> 
+			<property-class>com.controller.KullaniciController</property-class>
+			<value>#{kullaniciController}</value>
+		</managed-property>
+	</managed-bean>
 	
 	<managed-bean>
 		<managed-bean-name>kullaniciAnaSayfaController</managed-bean-name>
 		<managed-bean-class>com.controller.KullaniciAnaSayfaController</managed-bean-class>
-		<managed-bean-scope>view</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>kullaniciController</property-name>
 			<property-class>com.controller.KullaniciController</property-class>

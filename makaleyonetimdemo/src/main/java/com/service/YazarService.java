@@ -48,6 +48,9 @@ public class YazarService extends AbstractService<Yazar> {
 				}
 				else{
 					em.getTransaction().begin();
+					referans = em.merge(referans);
+					if(referans.getYazarlar() == null)
+						System.out.println("yazar referanslarý null");
 					referans.getYazarlar().add(yazar);
 					yazar.getReferansler().add(referans);
 					em.persist(yazar);

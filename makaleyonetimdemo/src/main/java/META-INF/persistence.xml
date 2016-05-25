@@ -18,7 +18,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 		
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/MakaleYonetimSistemi" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/MakaleYonetimSistemi?useUnicode=true&amp;characterEncoding=UTF-8"/>
 			<property name="javax.persistence.jdbc.user" value="emirdb" />
 			<property name="javax.persistence.jdbc.password" value="eql0xteq" />
 			<property name="eclipselink.ddl-generation" value="create-tables" />

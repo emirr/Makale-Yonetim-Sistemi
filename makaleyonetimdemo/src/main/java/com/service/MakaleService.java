@@ -102,7 +102,7 @@ public class MakaleService extends AbstractService<Makale> {
 		}
 	}
 
-	// makalenin kullanicisi silinirse bu metod çaðýrýlýr.
+	// makalenin kullanicisi silinirse bu metod ï¿½aï¿½ï¿½rï¿½lï¿½r.
 	public void deleteMakaleler(List<Makale> makaleler) {
 		EntityManager em = getEmf().createEntityManager();
 
@@ -110,7 +110,7 @@ public class MakaleService extends AbstractService<Makale> {
 			
 			for (Makale makale : makaleler) {
 				
-				System.out.println(""+makale.getMakaleAdi() + " silinmek üzere.");
+				System.out.println(""+makale.getMakaleAdi() + " silinmek ï¿½zere.");
 				deleteMakale(makale);
 				
 			}
@@ -157,7 +157,7 @@ public class MakaleService extends AbstractService<Makale> {
 			EtkinlikService ets = new EtkinlikService();
 			if(ad != null || anahtarKeliemler != null){
 				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "makale",
-						makale.getMakaleAdi() + etkinlikBilgi + "bilgileri güncellendi."));
+						makale.getMakaleAdi() + etkinlikBilgi + "bilgileri gï¿½ncellendi."));
 			}
 			
 			
@@ -168,9 +168,9 @@ public class MakaleService extends AbstractService<Makale> {
 		}
 	}
 
-	// findBy metodlarý search alanlarý için-->id,ad ve yayýntipine göre arama
-	// yapýlabilecek
-	// ayrýca findbyid sayesinde makaledetaysayfasýna veri gidecek.
+	// findBy metodlarï¿½ search alanlarï¿½ iï¿½in-->id,ad ve yayï¿½ntipine gï¿½re arama
+	// yapï¿½labilecek
+	// ayrï¿½ca findbyid sayesinde makaledetaysayfasï¿½na veri gidecek.
 	public Makale findMakaleById(int id) {
 		EntityManager em = getEmf().createEntityManager();
 		try {
@@ -219,12 +219,12 @@ public class MakaleService extends AbstractService<Makale> {
 		}
 	}
 
-	// adminin makaleSil sayfasýnýn controlleri bu metodu bütün makaleleri
-	// görmek için kullanýr.
+	// adminin makaleSil sayfasï¿½nï¿½n controlleri bu metodu bï¿½tï¿½n makaleleri
+	// gï¿½rmek iï¿½in kullanï¿½r.
 	public List<Makale> tumMakaleler() {
 		EntityManager em = getEmf().createEntityManager();
 		try {
-			TypedQuery<Makale> query = em.createQuery("select makale from com.entity.Makale", Makale.class);
+			Query  query = em.createQuery("select makale from com.entity.Makale makale");
 			// query.setParameter("isOnayli", true);
 			return query.getResultList();
 		} catch (NoResultException e) {
@@ -237,7 +237,7 @@ public class MakaleService extends AbstractService<Makale> {
 		}
 	}
 
-	// özel bir kullaniciya ait makalelerin listesi-->test edildi
+	// ï¿½zel bir kullaniciya ait makalelerin listesi-->test edildi
 	public List<Makale> makaleByKullaniciId(int kullaniciId) {
 		EntityManager em = getEmf().createEntityManager();
 		try {
@@ -257,33 +257,33 @@ public class MakaleService extends AbstractService<Makale> {
 		}
 	}
 
-	// istenen bir kullanýcýyla makale paylaþýmý-->denenecek 3
+	// istenen bir kullanï¿½cï¿½yla makale paylaï¿½ï¿½mï¿½-->denenecek 3
 	public void makalePaylas(int sahipKullaniciId, int makaleId, int digerKullanicId) {
 		EntityManager em = getEmf().createEntityManager();
 		try {
 			em.getTransaction().begin();
 			Makale makale = em.find(Makale.class, makaleId);
-			Kullanici sahipKullanici = em.find(Kullanici.class, sahipKullaniciId);// kullanýcýEtkinlik
-																					// için
+			Kullanici sahipKullanici = em.find(Kullanici.class, sahipKullaniciId);// kullanï¿½cï¿½Etkinlik
+																					// iï¿½in
 				if(makale.getReferans() == null){
 					System.out.println("makale ref null");
 				}
 				else
-					System.out.println("makale ref null deðil");
+					System.out.println("makale ref null deï¿½il");
 
 			Kullanici digerKullanici = em.find(Kullanici.class, digerKullanicId);
 			if(digerKullanici == null){
-				System.out.println("diðerki null");
+				System.out.println("diï¿½erki null");
 
 			}
 			else
-				System.out.println("diðerki null deðil");
+				System.out.println("diï¿½erki null deï¿½il");
 
-			// if kullanýcý zaten makaleye sahip deðilse
+			// if kullanï¿½cï¿½ zaten makaleye sahip deï¿½ilse
 			ReferansService rs = new ReferansService();
 			if (rs.kullaniciSahipOlduguReferanslar(digerKullanicId) != null) {
 				if (!rs.kullaniciSahipOlduguReferanslar(digerKullanicId).contains(makale.getReferans())) {
-					System.out.println("kullanýcý gönderilecek makaleye sahip deðil");
+					System.out.println("kullanï¿½cï¿½ gï¿½nderilecek makaleye sahip deï¿½il");
 					Makale yeniMakale = new Makale();
 					yeniMakale.setAnahtarKelimeler(makale.getAnahtarKelimeler());
 					yeniMakale.setMakaleAdi(makale.getMakaleAdi());
@@ -301,15 +301,15 @@ public class MakaleService extends AbstractService<Makale> {
 					EtkinlikService ets = new EtkinlikService();
 					sahipKullanici.getEtkinlikler()
 							.add(ets.createEtkinlik(sahipKullanici.getId(), "kullanici", digerKullanici.getKullaniciAd()
-									+ " kullanýcýsý ile " + makale.getMakaleAdi() + " makalesini paylaþtýnýz."));
+									+ " kullanï¿½cï¿½sï¿½ ile " + makale.getMakaleAdi() + " makalesini paylaï¿½tï¿½nï¿½z."));
 					digerKullanici.getEtkinlikler()
 							.add(ets.createEtkinlik(digerKullanici.getId(), "kullanici", sahipKullanici.getKullaniciAd()
-									+ " kullanýcýsý sizinle " + makale.getMakaleAdi() + " makalesini paylaþtý."));
+									+ " kullanï¿½cï¿½sï¿½ sizinle " + makale.getMakaleAdi() + " makalesini paylaï¿½tï¿½."));
 
 				} else
-					System.out.println("paylaþmak istediðin kullanýcý makaleye zaten sahip");
+					System.out.println("paylaï¿½mak istediï¿½in kullanï¿½cï¿½ makaleye zaten sahip");
 			} else {
-				//makalenin gönderileceði kullanýcýnýn hiç makalesi yoksa bu kol çalýþýr.
+				//makalenin gï¿½nderileceï¿½i kullanï¿½cï¿½nï¿½n hiï¿½ makalesi yoksa bu kol ï¿½alï¿½ï¿½ï¿½r.
 				Makale yeniMakale = new Makale();
 				yeniMakale.setAnahtarKelimeler(makale.getAnahtarKelimeler());
 				yeniMakale.setMakaleAdi(makale.getMakaleAdi());
@@ -327,10 +327,10 @@ public class MakaleService extends AbstractService<Makale> {
 				EtkinlikService ets = new EtkinlikService();
 				sahipKullanici.getEtkinlikler()
 						.add(ets.createEtkinlik(sahipKullanici.getId(), "kullanici", digerKullanici.getKullaniciAd()
-								+ " kullanýcýsý ile " + makale.getMakaleAdi() + " makalesini paylaþtýnýz."));
+								+ " kullanï¿½cï¿½sï¿½ ile " + makale.getMakaleAdi() + " makalesini paylaï¿½tï¿½nï¿½z."));
 				digerKullanici.getEtkinlikler()
 						.add(ets.createEtkinlik(digerKullanici.getId(), "kullanici", sahipKullanici.getKullaniciAd()
-								+ " kullanýcýsý sizinle " + makale.getMakaleAdi() + " makalesini paylaþtý."));
+								+ " kullanï¿½cï¿½sï¿½ sizinle " + makale.getMakaleAdi() + " makalesini paylaï¿½tï¿½."));
 			}
 
 			// makale.getKullanicilar().add(digerKullanici);
@@ -367,7 +367,27 @@ public class MakaleService extends AbstractService<Makale> {
 			}
 		}
 	}
+	public List<Makale> findAllMakaleForReferans(Referans ref) {
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			// System.out.println("refId:" + ref.getId());
+			// Referans ref = em.find(Referans.class, refId);
+			System.out.println("refId:" + ref.getId());
+			TypedQuery<Makale> query = em.createQuery("select m from com.entity.Makale m WHERE m.referans=:reference",
+					Makale.class);
+			query.setParameter("reference", ref);
+			
+			return query.getResultList();
 
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
 	public Makale findExistMakaleAdKeywordForKullanici(Makale makale,int kullaniciId){
 		EntityManager em = getEmf().createEntityManager();
 

@@ -1,12 +1,23 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" >
+<h:head>
+</h:head>
 <h:body>
-	<ui:composition template="/pages/protected/templates/master.xhtml">
-		<ui:define name="divMain">
-			#{bundle.welcomeMessage} :<br/>
-			<h:graphicImage library="images" name="logoReal.png" />
-		</ui:define>	
-	</ui:composition>
+	<h:form>
+	<p:accordionPanel>
+        <p:tab title="Giriş Yap">
+        <p:commandLink id="nonAjax" action="/pages/public/login.xhtml?faces-redirect=true" ajax="false">
+        <h:outputText value="Giriş Yapmak için tıklayınız" />
+    </p:commandLink>
+        </p:tab>
+        
+	<p:tab title="Kayıt Ol">
+	<p:commandLink id="nonAjax2" action="/pages/public/kayitOl.xhtml?faces-redirect=true" ajax="false">
+        <h:outputText value="Kayıt olmak için tıklayınız" />
+    </p:commandLink>
+			</p:tab>
+			</p:accordionPanel>
+	</h:form>
 </h:body>
 </html>

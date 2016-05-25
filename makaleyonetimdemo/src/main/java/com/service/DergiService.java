@@ -49,10 +49,10 @@ public class DergiService extends AbstractService<Dergi> {
 				dergi.setDergiAdi(dergiAd);
 			Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
-			if (dergiAd != null){
-				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "dergi",
-					makale.getReferans().getDergi().getDergiAdi() + "dergi ad güncelleme"));
-			}
+//			if (dergiAd != null){
+//				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "dergi",
+//					makale.getReferans().getDergi().getDergiAdi() + "dergi ad güncelleme"));
+//			}
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {

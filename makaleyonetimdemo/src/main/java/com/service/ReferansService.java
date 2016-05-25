@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.entity.Dergi;
+import com.entity.Kullanici;
 import com.entity.Makale;
 import com.entity.Referans;
 import com.entity.Yazar;
@@ -20,13 +21,13 @@ public class ReferansService extends AbstractService<Referans> {
 	}
 
 	// test edildi
-	public void createReferans(Referans referans, Dergi d1) {
+	public void createReferans(Referans referans) {
 		EntityManager em = getEmf().createEntityManager();
 
 		try {
 			em.getTransaction().begin();
-			referans.setDergi(d1);
-			System.out.println("dergi adý:" + d1.getDergiAdi());
+			//referans.setDergi(d1);
+			//System.out.println("dergi adï¿½:" + d1.getDergiAdi());
 			em.persist(referans);
 			em.getTransaction().commit();
 		} finally {
@@ -36,7 +37,7 @@ public class ReferansService extends AbstractService<Referans> {
 		}
 	}
 
-	public void updateReferans(int makaleId, long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo) {
+	public void updateReferans(int makaleId, long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo, int ay, String kitapevi,String yer, String kurumad, String konferansad, String referansad, String dergiad) {
 		EntityManager em = getEmf().createEntityManager();
 
 		try {
@@ -60,11 +61,26 @@ public class ReferansService extends AbstractService<Referans> {
 				referans.setBasSayfaNo(basSayfaNo);
 			if (sonSayfaNo != 0)
 				referans.setSonSayfaNo(sonSayfaNo);
+			if (ay != 0)
+				referans.setAy(ay);
+			if (kitapevi != null)
+				referans.setKitapevi(kitapevi);
+			if (yer != null)
+				referans.setYer(yer);
+			if (kurumad != null)
+				referans.setKurumad(kurumad);
+			if (konferansad != null)
+				referans.setKonferansad(konferansad);
+			if (referansad != null)
+				referans.setReferansad(referansad);
+			if (dergiad != null)
+				referans.setDergiad(dergiad);
 			// Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
-			if(yil != 0 || sayi != 0 || ciltNo != 0 || basSayfaNo != 0 || sonSayfaNo != 0 ){
+			if(yil != 0 || sayi != 0 || ciltNo != 0 || basSayfaNo != 0 || sonSayfaNo != 0 || ay!=0 || kitapevi != null ||
+					yer != null || kurumad != null || konferansad != null || referansad != null || dergiad != null){
 				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(),
-					"referans", makale.getMakaleAdi() + "referans bilgileri güncellendi."));
+					"referans", referans.getReferansad() + "referans bilgileri gÃ¼ncellendi."));
 			}
 			em.getTransaction().commit();
 		} finally {
@@ -73,6 +89,105 @@ public class ReferansService extends AbstractService<Referans> {
 			}
 		}
 	}
+	public void duzeltReferans(Kullanici kullanici,Referans ref,long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo, int ay, String kitapevi,String yer, String kurumad, String konferansad, String referansad, String dergiad) {
+		EntityManager em = getEmf().createEntityManager();
+
+		try {
+			em.getTransaction().begin();
+			//Makale makale = em.find(Makale.class, makaleId);
+			Referans referans = em.merge(ref);
+			
+			// System.out.println("bulunan referans:" +
+			// referans.getreferansbasSayfaNo());
+			if (yil != 0)
+				referans.setYil(yil);
+			if (sayi != 0)
+				referans.setSayi(sayi);
+			if (ciltNo != 0) {
+				// System.out.println("ciltNo:" + ciltNo);
+				referans.setCiltNo(ciltNo);
+				// System.out.println("referansgetunvsan:" +
+				// referans.getciltNo());
+			}
+			if (basSayfaNo != 0)
+				referans.setBasSayfaNo(basSayfaNo);
+			if (sonSayfaNo != 0)
+				referans.setSonSayfaNo(sonSayfaNo);
+			if (ay != 0)
+				referans.setAy(ay);
+			if (kitapevi != null)
+				referans.setKitapevi(kitapevi);
+			if (yer != null)
+				referans.setYer(yer);
+			if (kurumad != null)
+				referans.setKurumad(kurumad);
+			if (konferansad != null)
+				referans.setKonferansad(konferansad);
+			if (referansad != null)
+				referans.setReferansad(referansad);
+			if (dergiad != null)
+				referans.setDergiad(dergiad);
+			// Makale makale = em.find(Makale.class, makaleId);
+			EtkinlikService ets = new EtkinlikService();
+			if(yil != 0 || sayi != 0 || ciltNo != 0 || basSayfaNo != 0 || sonSayfaNo != 0 || ay!=0 || kitapevi != null ||
+					yer != null || kurumad != null || konferansad != null || referansad != null || dergiad != null){
+				kullanici.getEtkinlikler().add(ets.createEtkinlik(kullanici.getId(),
+					"referans", referans.getReferansad() + " referans bilgileri gÃ¼ncellendi."));
+			}
+			em.getTransaction().commit();
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	public void updateReferansHata(Referans ref, int hataStat, String hatamsg){
+		EntityManager em = getEmf().createEntityManager();
+
+		try {
+			em.getTransaction().begin();
+			ref = em.merge(ref);
+			ref.setReferanshata(hataStat);
+			ref.setRefhatamsg(hatamsg);
+			em.getTransaction().commit();
+
+		}finally{
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	public List<Referans> allRefs(){
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			Query query = em.createQuery("select r from com.entity.Referans r");
+			
+			return query.getResultList();
+		}catch (NoResultException e) {
+			System.out.println("null dï¿½necek");
+			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	public List<Referans> hataliReferanslar(){
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			Query query = em.createQuery("select r from com.entity.Referans r WHERE r.referanshata=:refhata");
+			query.setParameter("refhata", 1);
+			return query.getResultList();
+		}catch (NoResultException e) {
+			System.out.println("null dï¿½necek");
+			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	
 	public List<Referans> findReferans(long yil, int sayi, int ciltNo, Dergi d){
 		EntityManager em = getEmf().createEntityManager();
 		try {
@@ -85,7 +200,7 @@ public class ReferansService extends AbstractService<Referans> {
 			return query.getResultList();
 
 		} catch (NoResultException e) {
-			System.out.println("null dönecek");
+			System.out.println("null dï¿½necek");
 			return null;
 		} finally {
 			if (em != null) {
@@ -93,6 +208,26 @@ public class ReferansService extends AbstractService<Referans> {
 			}
 		}
 	}
+	
+	public Referans findReferans(String refAd) {
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			Query query = em.createQuery(
+					"select r from com.entity.Referans r WHERE r.referansad=:refad");
+			query.setParameter("refad", refAd);
+			
+			return (Referans) query.getSingleResult();
+
+		} catch (NoResultException e) {
+			// No matching result so return null
+			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	
 	public Referans findReferans(long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo, Dergi d) {
 		EntityManager em = getEmf().createEntityManager();
 		try {
@@ -157,7 +292,7 @@ public class ReferansService extends AbstractService<Referans> {
 			// query.setParameter("isOnayli", true);
 			ref = em.merge(ref);
 //			removeMakaleReferansFromYazarlar(ref);
-			Dergi d = ref.getDergi();
+			//Dergi d = ref.getDergi();
 			YazarService ys = new YazarService();
 			List<Yazar> yazarList = ys.findYazarByMakaleReferans(ref);
 			System.out.println("yazarlist size:"+ yazarList.size());
@@ -166,7 +301,7 @@ public class ReferansService extends AbstractService<Referans> {
 			//System.out.println("yazarlist size:"+ yazarList.size());
 			for(Yazar yazar : yazarList1){
 				if(yazar.getReferansler().size() == 0){
-					System.out.println("referansý kalmayan yazar adý:" + yazar.getYazarAdi());
+					System.out.println("referansï¿½ kalmayan yazar adï¿½:" + yazar.getYazarAdi());
 					ys.deleteYazar(yazar);
 				}
 			}
@@ -175,11 +310,11 @@ public class ReferansService extends AbstractService<Referans> {
 			em.getTransaction().commit();
 			
 			
-			DergiService ds = new DergiService();
-			if (ds.referansAdetForDergi(d.getId()) == 0){
-				System.out.println("dergi ad:"+d.getDergiAdi() +"reffordergi:" + ds.referansAdetForDergi(d.getId()));
-				ds.deleteDergi(d);
-			}
+//			DergiService ds = new DergiService();
+//			if (ds.referansAdetForDergi(d.getId()) == 0){
+//				System.out.println("dergi ad:"+d.getDergiAdi() +"reffordergi:" + ds.referansAdetForDergi(d.getId()));
+//				ds.deleteDergi(d);
+//			}
 			// return makale.getMakaleYayinTipi().toString();
 		} finally {
 			if (em != null) {
@@ -201,9 +336,10 @@ public class ReferansService extends AbstractService<Referans> {
 				em.getTransaction().begin();
 				yazarlar = em.merge(yazarlar);
 				yazarlar.getReferansler().remove(ref);
+				///System.out.println("ref kaldï¿½rï¿½lan yazar:" + );
 				em.getTransaction().commit();
 				yzrList.add(yazarlar);
-				// System.out.println("kesin kaldýrýlan makaleler:" + ref);
+				// System.out.println("kesin kaldï¿½rï¿½lan makaleler:" + ref);
 			}
 			//em.getTransaction().commit();
 			return yzrList;
@@ -225,7 +361,7 @@ public class ReferansService extends AbstractService<Referans> {
 			return query.getResultList();
 
 		} catch (NoResultException e) {
-			System.out.println("null dönecek");
+			System.out.println("null dï¿½necek");
 			return null;
 		} finally {
 			if (em != null) {

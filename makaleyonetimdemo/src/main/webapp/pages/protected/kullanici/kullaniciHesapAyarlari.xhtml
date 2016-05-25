@@ -43,16 +43,16 @@
 
 			<h:outputText rendered="#{!kullaniciHesapAyarController.editable}"
 				value="#{kullaniciHesapAyarController.kisi.unvan}" />
-			<h:selectOneRadio rendered="#{kullaniciHesapAyarController.editable}"
+			<p:selectOneMenu  rendered="#{kullaniciHesapAyarController.editable}"
 	 			value="#{kullaniciHesapAyarController.tip}" required="true">
-				<f:selectItem itemValue="-" itemLabel="-" />
-				<f:selectItem itemValue="Ogrenci" itemLabel="Ogrenci" />
-				<f:selectItem itemValue="Arastırma Grv." itemLabel="Arastırma Grv." />
+				<f:selectItem itemValue="Unvan Yok" itemLabel="Unvan Yok" />
+				<f:selectItem itemValue="Öğrenci" itemLabel="Öğrenci" />
+				<f:selectItem itemValue="Araştırma Grv." itemLabel="Araştırma Grv." />
 				<f:selectItem itemValue="Dr." itemLabel="Dr." />
-				<f:selectItem itemValue="Yar.Doc.Dr." itemLabel="Yar.Doc.Dr." />
-				<f:selectItem itemValue="Doc.Dr." itemLabel="Doc.Dr." />
+				<f:selectItem itemValue="Yar.Doç.Dr." itemLabel="Yar.Doç.Dr." />
+				<f:selectItem itemValue="Doç.Dr." itemLabel="Doç.Dr." />
 				<f:selectItem itemValue="Prof.Dr" itemLabel="Prof.Dr" />
-			</h:selectOneRadio>
+			</p:selectOneMenu>
 			
 			<h:outputLabel value="Okul:" style="font-weight:bold" />
 			

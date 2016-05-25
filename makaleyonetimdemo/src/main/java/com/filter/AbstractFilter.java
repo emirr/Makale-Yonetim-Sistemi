@@ -28,13 +28,13 @@ public class AbstractFilter {
 	}
 	
 	protected void accessDenied(ServletRequest request, ServletResponse response, HttpServletRequest req) throws ServletException, IOException {
-		System.out.println("eriþim reddedielcek.1");
+		System.out.println("eriÅŸim reddedielcek.");
 
 		String url = req.getRequestURL().toString();
 		//System.out.println("url:" + url);
 		//System.out.println("yeni url:"+url.substring(0, url.length() - origRequest.getRequestURI().length()) + origRequest.getContextPath() + "/");
 		url = url.substring(0, url.length() - req.getRequestURI().length()) + req.getContextPath() + "/faces";
-		System.out.println("eriþim reddedielcek.");
+		System.out.println("eriÅŸim reddedielcek.");
 		RequestDispatcher rd = req.getRequestDispatcher("/pages/public/yetkiAsimSayfasi.xhtml");
 		rd.forward(request, response);
 	}

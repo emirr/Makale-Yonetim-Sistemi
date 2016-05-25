@@ -54,12 +54,10 @@
 			</p:layoutUnit>
 			<p:layoutUnit position="center" resizable="false">
 		
-
 				<p:dataTable id="dtables" var="makaleAndMetaEntry"
 					value="#{kullaniciAnaSayfaController.makaleAndMetaSet.entrySet().toArray()}"
 					rows="10" paginator="true"
 					filteredValue="#{kullaniciAnaSayfaController.filteredMakaleler}">
-				
 					<p:column id="idColumn" rendered="false" headerText="Makale Id">
 
 						<h:outputText value="#{makaleAndMetaEntry.key.id}" />
@@ -101,13 +99,13 @@
 						</p:column>
 						
 						<p:column>
-							<p:commandButton oncomplete="PF('kullaniciSecim').show()" 	action="#{kullaniciAnaSayfaController.paylasilabilirKisiler(makaleAndMetaEntry.key.id)}"
+							<p:commandButton oncomplete="PF('kullaniciSecim').show()" update="@widgetVar(kullaniciSecim)"	action="#{kullaniciAnaSayfaController.paylasilabilirKisiler(makaleAndMetaEntry.key.id)}"
 							icon="ui-icon-transferthick-e-w" title="Paylaş">
 							</p:commandButton>
 						</p:column>
 						
 						<p:column>
-							<p:commandButton oncomplete="PF('makaleOku').show()" icon="ui-icon-note" title="Oku">
+							<p:commandButton oncomplete="PF('makaleOku').show()" action="#{kullaniciAnaSayfaController.makaleOku(makaleAndMetaEntry.key.id)}" icon="ui-icon-note" title="Oku" update="@widgetVar(makaleOku)">
 							
 							</p:commandButton>
 						</p:column>
@@ -123,13 +121,16 @@
 					
 				</p:dataTable>
 			
+				<p:growl id="MessageId"  showDetail="true"  closable="true"/>
 
 
 
 			</p:layoutUnit>
 
 		</p:layout>
-		
+		<p:dialog widgetVar="makaleOku" >
+		 <p:media value="#{kullaniciAnaSayfaController.content}" width="100%" height="500px" player="pdf" />  
+		</p:dialog>
 		<p:confirmDialog header="Makale Paylaşımı" widgetVar="kullaniciSecim" message="Makale Paylaşabileceğiniz Kullanıcılar" >
 		<p:dataTable id="kisisecimtables" var="kisi"
 				 	value="#{kullaniciAnaSayfaController.hazirList}"
@@ -186,7 +187,7 @@
                 
                secilen kisinin adi: #{kisiler.kullaniciAd}
                secilen kisinin unvan: #{kisiler.unvan}
-               secilen kisinin okulu : #{kisiler.unvan}
+               secilen kisinin kurumu : #{kisiler.okul}
             </p:dataList>
 			
 				<p:commandButton value="Evet, Onaylıyorum" 
@@ -215,19 +216,19 @@
 		</p:confirmDialog>
 		
 
-		<p:confirmDialog  header="Makale Detayları" message="Makaleye Ait Tüm Bilgiler" widgetVar="makaleDialog1" height="10">
+		<p:confirmDialog  header="Eser Detayları" message="Esere Ait Tüm Bilgiler" widgetVar="makaleDialog1" height="10">
 
 		<h:panelGrid id="innerconfirmation2">
 			<h:panelGrid id="innerconfirmation1" columns="2" columnClasses="grid,grid">
 			
 				<h:panelGrid columns="2" columnClasses="label, value" >
 
-					<h:outputLabel value="Makale Adı:" style="font-weight:bold"/>
+					<h:outputLabel value="Eser Adı:" style="font-weight:bold"/>
 
 					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
-						value="#{kullaniciAnaSayfaController.makale.makaleAdi}" />
+						value="#{kullaniciAnaSayfaController.referans.referansad}" />
 					<p:inputText rendered="#{kullaniciAnaSayfaController.editStat}"
-						value="#{kullaniciAnaSayfaController.makale.makaleAdi}" />
+						value="#{kullaniciAnaSayfaController.referans.referansad}" />
 
 					<h:outputLabel value="AnahtarKelime:" style="font-weight:bold"/>
 
@@ -267,58 +268,98 @@
 						<f:selectItem itemValue="Tez" itemLabel="Tez" />
 						<f:selectItem itemValue="Kitap" itemLabel="Kitap " />
 						<f:selectItem itemValue="Bildiri" itemLabel="Bildiri " />
-						<f:selectItem itemValue="Konferans" itemLabel="Konferans" />
+						<f:selectItem itemValue="Makale" itemLabel="Makale" />
 					</h:selectOneRadio>
-					
-					
-						</h:panelGrid>
-						
-<h:panelGrid columns="2" columnClasses="label, value" >
-<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.dergiGuncellenebilir}"  value="Dergi Adı:" style="font-weight:bold"/>
-					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
-						value="#{kullaniciAnaSayfaController.dergi.dergiAdi}" />
-					<p:inputText rendered="#{kullaniciAnaSayfaController.dergiGuncellenebilir}"
-						value="#{kullaniciAnaSayfaController.dergi.dergiAdi}" />
-						
+				
 					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Yayın Yılı:" style="font-weight:bold"/>
 
 					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
 						value="#{kullaniciAnaSayfaController.referans.yil}" />
 					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
 						value="#{kullaniciAnaSayfaController.referans.yil}" />
+						<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat}" value="Yazarlar:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.yazarList}" />
+					
+						</h:panelGrid>
+						
+<h:panelGrid columns="2" columnClasses="label, value" >
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.makale}">
+<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.dergiGuncellenebilir}"  value="Dergi Adı:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.dergiad}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.dergiGuncellenebilir}"
+						value="#{kullaniciAnaSayfaController.referans.dergiad}" />
+</h:panelGrid>			
 
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.makale or kullaniciAnaSayfaController.myt.bildiri}">
 					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Dergi Sayı:" style="font-weight:bold"/>
 
 					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
 						value="#{kullaniciAnaSayfaController.referans.sayi}" />
 					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
 						value="#{kullaniciAnaSayfaController.referans.sayi}" />
-
+</h:panelGrid>
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.makale}">
 					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Dergi Cilt No:" style="font-weight:bold"/>
 
 					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
 						value="#{kullaniciAnaSayfaController.referans.ciltNo}" />
 					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
 						value="#{kullaniciAnaSayfaController.referans.ciltNo}" />
-
+</h:panelGrid>
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.makale or kullaniciAnaSayfaController.myt.bildiri}">
 					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Baş No:" style="font-weight:bold"/>
 					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
 						value="#{kullaniciAnaSayfaController.referans.basSayfaNo}" />
 					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
 						value="#{kullaniciAnaSayfaController.referans.basSayfaNo}" />
-
+</h:panelGrid>
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.makale or kullaniciAnaSayfaController.myt.bildiri}">
 					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Son Sayfa No:" style="font-weight:bold"/>
 					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
 						value="#{kullaniciAnaSayfaController.referans.sonSayfaNo}" />
 					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
 					 	value="#{kullaniciAnaSayfaController.referans.sonSayfaNo}" />
-
-					
+</h:panelGrid >
+	<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.bildiri}">
+					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="konferans ad:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.konferansad}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+					 	value="#{kullaniciAnaSayfaController.referans.konferansad}" />
+	</h:panelGrid>	
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.bildiri or kullaniciAnaSayfaController.myt.tez}">
+<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Yer :" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.yer}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+					 	value="#{kullaniciAnaSayfaController.referans.yer}" />
+</h:panelGrid>
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.bildiri or kullaniciAnaSayfaController.myt.tez}">
+<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Ay :" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.ay}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+					 	value="#{kullaniciAnaSayfaController.referans.ay}" />
+</h:panelGrid>
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.tez}">
+<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Kurum:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.kurumad}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+					 	value="#{kullaniciAnaSayfaController.referans.kurumad}" />
+</h:panelGrid>		
+<h:panelGrid rendered="#{kullaniciAnaSayfaController.myt.kitap}">
+<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat or kullaniciAnaSayfaController.referansGuncellenebilir}" value="Kitap evi:" style="font-weight:bold"/>
+					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
+						value="#{kullaniciAnaSayfaController.referans.kitapevi}" />
+					<p:inputText rendered="#{kullaniciAnaSayfaController.referansGuncellenebilir}"
+					 	value="#{kullaniciAnaSayfaController.referans.kitapevi}" />
+</h:panelGrid>		
 						
 					
-					<h:outputLabel rendered="#{!kullaniciAnaSayfaController.editStat}" value="Yazarlar:" style="font-weight:bold"/>
-					<h:outputText rendered="#{!kullaniciAnaSayfaController.editStat}"
-						value="#{kullaniciAnaSayfaController.yazarList}" />
+					
 				</h:panelGrid>
 				
 			</h:panelGrid>

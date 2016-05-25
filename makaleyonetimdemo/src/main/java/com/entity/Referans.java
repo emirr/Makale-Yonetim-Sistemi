@@ -17,8 +17,9 @@ import javax.persistence.Table;
 @Table(name = "REFERANS")
 // namedqueryler eklenecek
 public class Referans implements Serializable{
-	public Referans(long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo) {
+	public Referans(String referansad, long yil, int sayi, int ciltNo, int basSayfaNo, int sonSayfaNo) {
 		super();
+		this.referansad = referansad;
 		this.yil = yil;
 		this.sayi = sayi;
 		this.ciltNo = ciltNo;
@@ -27,7 +28,44 @@ public class Referans implements Serializable{
 		//this.DERGI = dergi;
 		yazarlar = new HashSet<Yazar>();
 	}
-
+	
+	public Referans(String referansad, long yil, String kitapevi) {
+		super();
+		this.referansad = referansad;
+		this.yil = yil;
+		this.kitapevi = kitapevi;
+		
+		//this.DERGI = dergi;
+		yazarlar = new HashSet<Yazar>();
+	}
+	
+	public Referans(String referansad, long yil, int sayi,int ay, String tezYer, String kurum) {
+		super();
+		this.referansad = referansad;
+		this.yil = yil;
+		this.sayi = sayi;
+		this.ay = ay;
+		this.kurumad = kurum;
+		this.yer = tezYer;
+		//this.DERGI = dergi;
+		yazarlar = new HashSet<Yazar>();
+	}
+	
+	public Referans(String referansad, long yil, int sayi, String konferansad, String konferansyeri,int ay,int basSayfaNo, int sonSayfaNo) {
+		super();
+		this.referansad = referansad;
+		this.konferansad = konferansad;
+		this.yer = konferansyeri;
+		this.yil = yil;
+		this.ay = ay;
+		this.sayi = sayi;
+		//this.ciltNo = ciltNo;
+		this.basSayfaNo = basSayfaNo;
+		this.sonSayfaNo = sonSayfaNo;
+		//this.DERGI = dergi;
+		yazarlar = new HashSet<Yazar>();
+	}
+	
 	public Referans() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -46,13 +84,109 @@ public class Referans implements Serializable{
 	private int sayi;
 	@Column(name = "ciltNo")
 	private int ciltNo;
+	
 	private int basSayfaNo;
 	private int sonSayfaNo;
 	
-	@ManyToOne
-	private Dergi DERGI;
+//	@ManyToOne
+//	private Dergi DERGI;
 	@ManyToMany(mappedBy = "referanslar")
 	private HashSet<Yazar> yazarlar;
+	
+	@Column(name = "referansad")
+	private String referansad;
+	public String getReferansad() {
+		System.out.println("in referans class:"+referansad);
+		return referansad;
+	}
+
+	public void setReferansad(String referansad) {
+		this.referansad = referansad;
+	}
+
+	public int getReferanshata() {
+		return referanshata;
+	}
+
+	public void setReferanshata(int referanshata) {
+		this.referanshata = referanshata;
+	}
+
+	public String getRefhatamsg() {
+		return refhatamsg;
+	}
+
+	public void setRefhatamsg(String refhatamsg) {
+		this.refhatamsg = refhatamsg;
+		System.out.println("refhatamsg1:"+refhatamsg);
+	}
+
+	public String getKonferansad() {
+		return konferansad;
+	}
+
+	public void setKonferansad(String konferansad) {
+		this.konferansad = konferansad;
+		System.out.println("rekonfad:"+konferansad);
+	}
+
+	public String getKurumad() {
+		return kurumad;
+	}
+
+	public void setKurumad(String kurumad) {
+		this.kurumad = kurumad;
+	}
+
+	public String getKitapevi() {
+		return kitapevi;
+	}
+
+	public void setKitapevi(String kitapevi) {
+		this.kitapevi = kitapevi;
+	}
+
+	public String getYer() {
+		return yer;
+	}
+
+	public void setYer(String yer) {
+		this.yer = yer;
+		System.out.println("refyer:"+yer);
+	}
+
+	public int getAy() {
+		return ay;
+	}
+
+	public void setAy(int ay) {
+		this.ay = ay;
+	}
+
+	@Column(name = "referanshata")
+	private int referanshata;
+	@Column(name = "refhatamsg")
+	private String refhatamsg;
+	@Column(name = "konferansad")
+	private String konferansad;
+	@Column(name = "kurumad")
+	private String kurumad;
+	@Column(name = "kitapevi")
+	private String kitapevi;
+	@Column(name = "yer")
+	private String yer;
+	@Column(name = "ay")
+	private int ay;
+	@Column(name = "dergiad")
+	private String dergiad;
+	public String getDergiad() {
+		return dergiad;
+	}
+
+	public void setDergiad(String dergiad) {
+		this.dergiad = dergiad;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -101,13 +235,13 @@ public class Referans implements Serializable{
 		this.sonSayfaNo = sonSayfaNo;
 	}
 
-	public Dergi getDergi() {
-		return DERGI;
-	}
-
-	public void setDergi(Dergi dergi) {
-		this.DERGI = dergi;
-	}
+//	public Dergi getDergi() {
+//		return DERGI;
+//	}
+//
+//	public void setDergi(Dergi dergi) {
+//		this.DERGI = dergi;
+//	}
 	public HashSet<Yazar> getYazarlar() {
 		return yazarlar;
 	}
@@ -118,7 +252,7 @@ public class Referans implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((DERGI == null) ? 0 : DERGI.hashCode());
+		//result = prime * result + ((DERGI == null) ? 0 : DERGI.hashCode());
 		result = prime * result + basSayfaNo;
 		result = prime * result + ciltNo;
 		result = prime * result + id;
@@ -137,25 +271,12 @@ public class Referans implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Referans other = (Referans) obj;
-		if (DERGI == null) {
-			if (other.DERGI != null)
+		if (referansad == null) {
+			if (other.referansad != null)
 				return false;
-		} else if (!DERGI.equals(other.DERGI))
+		} else if (!referansad.equals(other.referansad))
 			return false;
-		if (basSayfaNo != other.basSayfaNo)
-			return false;
-		if (ciltNo != other.ciltNo)
-			return false;
-//		if (id != other.id)
-//			return false;
-		if (sayi != other.sayi)
-			return false;
-		if (sonSayfaNo != other.sonSayfaNo)
-			return false;
-		if (yil != other.yil)
-			return false;
-		if (id != other.id)
-			return false;
+		
 		return true;
 	}
 }

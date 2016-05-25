@@ -21,27 +21,27 @@ public class MakaleYayinTipi implements Serializable {
 	@Column(name = "id")
 	private int id;
 	@Column(name = "isBildiri")
-	private boolean isBildiri;
-	@Column(name = "isKonferans")
-	private boolean isKonferans;
+	private boolean bildiri;
+	@Column(name = "isMakale")
+	private boolean makale;
 
 	public MakaleYayinTipi() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public MakaleYayinTipi(boolean isBildiri, boolean isKonferans, boolean isTez, boolean isKitap) {
+	public MakaleYayinTipi(boolean isBildiri, boolean isMakale, boolean isTez, boolean isKitap) {
 		super();
-		this.isBildiri = isBildiri;
-		this.isKonferans = isKonferans;
-		this.isTez = isTez;
-		this.isKitap = isKitap;
+		this.bildiri = isBildiri;
+		this.makale = isMakale;
+		this.tez = isTez;
+		this.kitap = isKitap;
 	}
 
 	@Column(name = "isTez")
-	private boolean isTez;
+	private boolean tez;
 	@Column(name = "isKitap")
-	private boolean isKitap;
+	private boolean kitap;
 
 	public int getId() {
 		return id;
@@ -52,35 +52,35 @@ public class MakaleYayinTipi implements Serializable {
 	}
 
 	public boolean isBildiri() {
-		return isBildiri;
+		return bildiri;
 	}
 
 	public void setBildiri(boolean isBildiri) {
-		this.isBildiri = isBildiri;
+		this.bildiri = isBildiri;
 	}
 
-	public boolean isKonferans() {
-		return isKonferans;
+	public boolean isMakale() {
+		return makale;
 	}
 
-	public void setKonferans(boolean isKonferans) {
-		this.isKonferans = isKonferans;
+	public void setMakale(boolean isMakale) {
+		this.makale = isMakale;
 	}
 
 	public boolean isTez() {
-		return isTez;
+		return tez;
 	}
 
 	public void setTez(boolean isTez) {
-		this.isTez = isTez;
+		this.tez = isTez;
 	}
 
 	public boolean isKitap() {
-		return isKitap;
+		return kitap;
 	}
 
 	public void setKitap(boolean isKitap) {
-		this.isKitap = isKitap;
+		this.kitap = isKitap;
 	}
 
 	@Override
@@ -100,13 +100,13 @@ public class MakaleYayinTipi implements Serializable {
 
 	@Override
 	public String toString() {
-		if (isBildiri == true) {
+		if (bildiri == true) {
 			return "Bildiri";
 		} else {
-			if (isKonferans == true) {
-				return "Konferans";
+			if (makale == true) {
+				return "Makale";
 			} else {
-				if (isTez == true) {
+				if (tez == true) {
 					return "Tez";
 				} else
 					return "Kitap";

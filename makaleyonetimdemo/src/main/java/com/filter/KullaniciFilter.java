@@ -26,7 +26,7 @@ public class KullaniciFilter  extends AbstractFilter implements Filter{
 		KullaniciController kullaniciControl = (KullaniciController) req.getSession().getAttribute("kullaniciController");
 
 		if (kullaniciControl != null) {
-			if(kullaniciControl.getKullanici().getRol().equals("ADMIN") || kullaniciControl.getKullanici().getRol().equals("KULLANICI")){
+			if(kullaniciControl.getKullanici().getRol().toString().equals("ADMIN") || kullaniciControl.getKullanici().getRol().toString().equals("KULLANICI")){
 				chain.doFilter(request, response);
 			}
 			else{

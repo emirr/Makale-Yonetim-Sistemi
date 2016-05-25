@@ -34,7 +34,7 @@ public class MakaleYayinTipiService extends AbstractService<MakaleYayinTipi> {
 
 	
 	
-	public void updateMakaleYayinTipi(int makaleId,boolean isBildiri, boolean isKonferans, boolean isTez, boolean isKitap) {
+	public void updateMakaleYayinTipi(int makaleId,boolean isBildiri, boolean isMakale, boolean isTez, boolean isKitap) {
 		EntityManager em = getEmf().createEntityManager();
 
 		try {
@@ -47,15 +47,15 @@ public class MakaleYayinTipiService extends AbstractService<MakaleYayinTipi> {
 			System.out.println("mevcut yayýn tipi:" + yayinTipi.toString());
 			yayinTipi.setBildiri(false);
 			yayinTipi.setKitap(false);
-			yayinTipi.setKonferans(false);
+			yayinTipi.setMakale(false);
 			yayinTipi.setTez(false);
 			//System.out.println("bulunan MakaleYayinTipi:" + MakaleYayinTipi.getMakaleYayinTipibasSayfaNo());
 			if (isBildiri == true){
 				yayinTipi.setBildiri(isBildiri);
 				System.out.println("yayýn türü:" + "bildiri");
-			}else{ if(isKonferans == true){
-					yayinTipi.setKonferans(isKonferans);
-					System.out.println("yayýn türü:" + "konferans");
+			}else{ if(isMakale == true){
+					yayinTipi.setMakale(isMakale);
+					System.out.println("yayýn türü:" + "makale");
 				  }
 				  else {if(isTez == true){
 						yayinTipi.setTez(isTez);
@@ -70,7 +70,7 @@ public class MakaleYayinTipiService extends AbstractService<MakaleYayinTipi> {
 		//	Makale makale = em.find(Makale.class, makaleId);
 			em.getTransaction().commit();
 			EtkinlikService ets = new EtkinlikService();
-			if(isBildiri != false || isKonferans != false || isTez != false || isKitap != false)
+			if(isBildiri != false || isMakale != false || isTez != false || isKitap != false)
 				makale.getKullanicilar().getEtkinlikler().add(ets.createEtkinlik(makale.getKullanicilar().getId(), "makaleYayintip",makale.getMakaleAdi() + "yayin tipi güncellendi"));
 			
 		} finally {

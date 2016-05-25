@@ -25,13 +25,13 @@ public class KullaniciService extends AbstractService<Kullanici> {
 		try {
 			em.getTransaction().begin();
 			em.persist(kullanici);
-			// burada kullanicietkinlik'e eklemeler yapýlacak,kullanýcýOnaylama
-			// alaný true yapýlacak
+			// burada kullanicietkinlik'e eklemeler yapï¿½lacak,kullanï¿½cï¿½Onaylama
+			// alanï¿½ true yapï¿½lacak
 			em.getTransaction().commit();
 			// em.getTransaction().begin();
 			EtkinlikService ets = new EtkinlikService();
 			kullanici.getEtkinlikler()
-					.add(ets.createEtkinlik(kullanici.getId(), "kullanici", "sisteme kayit oldunuz."));
+					.add(ets.createEtkinlik(kullanici.getId(), "kullanici", "sisteme kayÄ±t oldunuz."));
 			// em.getTransaction().commit();
 		} finally {
 			if (em != null) {
@@ -40,8 +40,8 @@ public class KullaniciService extends AbstractService<Kullanici> {
 		}
 	}
 
-	// makaleleri ve diðer iliþkili sýnýflarý silmiyor.düzeltilecek
-	// 1-->düzeltildi
+	// makaleleri ve diï¿½er iliï¿½kili sï¿½nï¿½flarï¿½ silmiyor.dï¿½zeltilecek
+	// 1-->dï¿½zeltildi
 	public void deleteKullanici(Kullanici silinenKullanici,Kullanici adminkullanici) {
 		EntityManager em = getEmf().createEntityManager();
 
@@ -50,25 +50,25 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			// em.remove(em.merge(kullanici));
 			silinenKullanici = em.merge(silinenKullanici);
 			// YazarService ys = new YazarService();
-			// MakaleService ms = new MakaleService();
-			// System.out.println("yazar service oluþturuldu.");
-			// önce makale ve yazar tablolarýnýn iliþkisi kesilir.
-			// for(Makale makale : kullanici.getMakaleler()){
+			 MakaleService ms = new MakaleService();
+			// System.out.println("yazar service oluï¿½turuldu.");
+			 //ï¿½nce makale ve yazar tablolarï¿½nï¿½n iliï¿½kisi kesilir.
+			 for(Makale makale : ms.makaleByKullaniciId(silinenKullanici.getId())){
 			// ys.removeMakaleFromYazarlar(makale);
-			// System.out.println("kaldýrýlan makale:" + makale.getMakaleAdi());
-			// //ms.deleteMakale(makale);
-			// }
+				System.out.println("kaldÄ±rÄ±lan makale:" + makale.getMakaleAdi());
+			 	ms.deleteMakale(makale);
+			 }
 			EtkinlikService ets = new EtkinlikService();
-			MakaleMetadataService mms = new MakaleMetadataService();
+//			MakaleMetadataService mms = new MakaleMetadataService();
 //			mms.deleteMakaleMetadatalar(silinenKullanici);
 //			MakaleService ms = new MakaleService();
-//			System.out.println("baþla artýk");
+//			System.out.println("baï¿½la artï¿½k");
 //			List<Makale> makaleler = ms.makaleByKullaniciId(silinenKullanici.getId());
-//			System.out.println("baþlýyor");
+//			System.out.println("baï¿½lï¿½yor");
 			//ms.deleteMakaleler(makaleler);
 			
 			// System.out.println("fjdfj");
-			// artýk kullanýcý silinebilir.
+			// artï¿½k kullanï¿½cï¿½ silinebilir.
 			//ets.deleteKullaniciEtkinlik(silinenKullanici);
 			em.remove(silinenKullanici);
 			
@@ -119,7 +119,7 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			// Makale makale = em.find(Makale.class, makaleId);
 			EtkinlikService ets = new EtkinlikService();
 			kullanici.getEtkinlikler()
-					.add(ets.createEtkinlik(kullaniciId, "kullanici", etkinlikBilgi + " bilgileri güncellendi"));
+					.add(ets.createEtkinlik(kullaniciId, "kullanici", etkinlikBilgi + " bilgileri gÃ¼ncellendi"));
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {
@@ -138,9 +138,9 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			bekleyenKullanici.setSifre(sifre);
 			EtkinlikService ets = new EtkinlikService();
 			adminkullanici.getEtkinlikler().add(ets.createEtkinlik(adminkullanici.getId(), "kullanici",
-					adminkullanici.getKullaniciAd() + " kullanýcýsýnýn kaydý onaylandý."));
+					adminkullanici.getKullaniciAd() + " kullanÄ±cÄ±sÄ±nÄ±n kaydÄ± onaylandÄ±."));
 			bekleyenKullanici.getEtkinlikler()
-					.add(ets.createEtkinlik(bekleyenKullanici.getId(), "kullanici", " hesabýnýz onaylandý."));
+					.add(ets.createEtkinlik(bekleyenKullanici.getId(), "kullanici", " hesabÄ±nÄ±z onaylandÄ±."));
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {
@@ -165,10 +165,10 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			adminkullanici.getEtkinlikler().add(ets.createEtkinlik(adminkullanici.getId(), "kullanici",
 					bekleyenKullanici.getKullaniciAd() + " kullanicisinin kaydini onayladin."));
 			bekleyenKullanici.getEtkinlikler()
-					.add(ets.createEtkinlik(bekleyenKullanici.getId(), "kullanici", " hesabiniz onaylandi."));
+					.add(ets.createEtkinlik(bekleyenKullanici.getId(), "kullanici", " hesabÄ±nÄ±z onaylandÄ±."));
 			// kullanici.getEtkinlikler().add(ets.createEtkinlik(kullanici.getId(),
-			// "kullanici",kullanici.getKullaniciAd()+" kullanýcýsýnýn kaydý
-			// onaylandý."));
+			// "kullanici",kullanici.getKullaniciAd()+" kullanï¿½cï¿½sï¿½nï¿½n kaydï¿½
+			// onaylandï¿½."));
 			em.getTransaction().commit();
 		} finally {
 			if (em != null) {
@@ -183,7 +183,7 @@ public class KullaniciService extends AbstractService<Kullanici> {
 		try {
 			em.getTransaction().begin();
 			// String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-			// System.out.println("verilen þifre:"+uuid);
+			// System.out.println("verilen ï¿½ifre:"+uuid);
 
 			final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 			SecureRandom rnd = new SecureRandom();
@@ -192,7 +192,7 @@ public class KullaniciService extends AbstractService<Kullanici> {
 			for (int i = 0; i < len; i++) {
 				sb.append(AB.charAt(rnd.nextInt(AB.length())));
 			}
-			System.out.println("verilen þifre:" + sb.toString());
+			System.out.println("verilen ÅŸifre:" + sb.toString());
 
 			kullaniciyaSifreVer(adminKullaniciId, onaylanacakKullaniciId, sb.toString());
 			em.getTransaction().commit();
@@ -203,7 +203,7 @@ public class KullaniciService extends AbstractService<Kullanici> {
 		}
 	}
 
-	// public void removeKullanici-->kullanici ve ilgil bütün verileri silinecek
+	// public void removeKullanici-->kullanici ve ilgil bï¿½tï¿½n verileri silinecek
 	// test edildi.
 	public Kullanici findKullaniciById(int id) {
 		EntityManager em = getEmf().createEntityManager();
@@ -328,12 +328,30 @@ public class KullaniciService extends AbstractService<Kullanici> {
 	public List<Kullanici> listOnayBekleyenKullanicilar() {
 		EntityManager em = getEmf().createEntityManager();
 		try {
-			Query query = em.createQuery("SELECT k FROM com.entity.Kullanici k WHERE k.isOnayli<>:onayDurumu");
+			Query query = em.createQuery("SELECT k FROM com.entity.Kullanici k WHERE k.isOnayli<>:onayDurumu and k.id<>:k_Id");
 			query.setParameter("onayDurumu", true);
+			query.setParameter("k_Id", 1);
+
 			return query.getResultList();
 		} catch (NoResultException e) {
 			// No matching result so return null
 			return null;
+		} finally {
+			if (em != null) {
+				em.close();
+			}
+		}
+	}
+	public void setKullaniciMesaj(Kullanici k,int msgStat, String msg){
+		EntityManager em = getEmf().createEntityManager();
+		try {
+			em.getTransaction().begin();
+			k = em.merge(k);
+			k.setMessagestat(msgStat);
+			k.setMessage(msg);
+			em.getTransaction().commit();
+
+		
 		} finally {
 			if (em != null) {
 				em.close();

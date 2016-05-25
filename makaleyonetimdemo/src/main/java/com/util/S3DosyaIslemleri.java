@@ -1,6 +1,8 @@
 package com.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +16,7 @@ public class S3DosyaIslemleri {
 	public static void s3DosyaYukleme(String makalePath, InputStream in) {
 		fileName = folderPath + makalePath;
 		if(in == null){
-			System.out.println("in null çýktý");
+			System.out.println("in null Ã§Ä±ktÄ±");
 		}
 		else{
 			try {
@@ -32,8 +34,8 @@ public class S3DosyaIslemleri {
 				in.close();
 				out.flush();
 				out.close();
-				//gerçekte burada s3 file gönderme kodu olacak
-				System.out.println("S3'e dosya yükleniyor");
+				//gerï¿½ekte burada s3 file gï¿½nderme kodu olacak
+				System.out.println("S3'e dosya yï¿½kleniyor");
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
@@ -44,6 +46,22 @@ public class S3DosyaIslemleri {
 	public static void s3DosyaSilme(String makalePath) {
 		fileName = folderPath + makalePath;
 		System.out.println("S3'den dosya siliniyor");
+
+	}
+	
+	public static FileInputStream s3DosyaOkuma(String makalePath){
+		fileName = folderPath + makalePath;
+		File file = new File(fileName);
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		 return fis;
 
 	}
 }

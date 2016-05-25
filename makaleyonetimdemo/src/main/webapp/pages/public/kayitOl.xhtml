@@ -5,82 +5,63 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
-	<title>Makale Ekleme</title>
+	<title>Kayıt Ekranı</title>
 
 </h:head>
 <h:body>
 	<h:form id="outerform" >
 
 
-		<p:panel header="Makale Tip-Yazar-Veri Yüklemeleri ">
+		<p:panel header="Kayıt Ol">
 
 
 
-			<h:panelGrid id="ikinciadim" columns="1" columnClasses="label, value">
-
-				<h:panelGrid>
-					<h:panelGrid columns="2" columnClasses="label, value">
-						<h:outputLabel value="Yayın Tipi:" style="font-weight:bold" />
-						<h:selectOneRadio
-							disabled="#{makaleEkleController.tipYazarOlusturuldu}"
-							value="#{makaleEkleController.makaleTip}" required="true">
-							<p:ajax event="blur" update="outtip" />
-							<f:selectItem itemValue="Tez" itemLabel="Tez" />
-							<f:selectItem itemValue="Kitap" itemLabel="Kitap " />
-							<f:selectItem itemValue="Bildiri" itemLabel="Bildiri " />
-							<f:selectItem itemValue="Konferans" itemLabel="Konferans" />
-						</h:selectOneRadio>
-					</h:panelGrid>
-				</h:panelGrid>
-
-				<h:panelGrid columns="3" columnClasses="label, value">
-					
-				</h:panelGrid>
-
-				
-	  				 <p:commandButton value="Upload" action="#{makaleEkleController.fUpd2}"  />
-					 
-				
+			<h:panelGrid id="bilgigiris" >
+			<f:event listener="#{kayitController.validateGuncellemeBilgileri}"
+							type="postValidate" />
 				<h:panelGrid columns="2" columnClasses="label, value">
-					<p:commandButton value="Tip-Yazar Kaydet" type="button"
-						onclick="PF('confirmDialog8').show()"></p:commandButton>
-					<p:commandButton value="Ana Sayfaya Dön"
-						onclick="PF('confirmDialog3').show()"></p:commandButton>
-				</h:panelGrid>
-
-				<p:confirmDialog header="Ana Sayfaya Dönmek İstiyormusunuz?"
-					message="Eğer ana sayfaya dönerseniz kaydettiğiniz verileri kaybedeceksiniz.
-				Ana sayfaya dönmek istediğinizden emin misiniz?"
-					severity="alert" widgetVar="confirmDialog3">
-					<p:commandButton value="Evet, Onaylıyorum"
-						action="#{makaleEkleController.silme}" immediate="true"
-						oncomplete="PF('confirmDialog3').hide()" ajax="false" />
-					<p:commandButton value="Hayır, Onaylamıyorum"
-						onclick="PF('confirmDialog3').hide();" type="button" />
-
-				</p:confirmDialog>
-
-				<p:confirmDialog header="Tip-Yazar bilgilerini onaylıyormusunuz?"
-					widgetVar="confirmDialog8">
-					<h:panelGrid columns="2" columnClasses="label, value">
-
-						<h:outputLabel value="Yayın Tipi:" style="font-weight:bold" />
-						<h:outputText id="outtip"
-							value="#{makaleEkleController.makaleTip}" />
-
-						<h:outputLabel id="outyzr" value="Yazarlar:"
-							style="font-weight:bold" />
-						<h:outputText value="#{makaleEkleController.yazarAdlari}" />
-					</h:panelGrid>
-					<p:commandButton value="Evet, Onaylıyorum"
-						action="#{makaleEkleController.tipYazarOlustur}"
-						oncomplete="PF('confirmDialog8').hide()" ajax="false"
-						update="ikinciadim" />
-					<p:commandButton value="Hayır, Onaylamıyorum"
-						onclick="PF('confirmDialog8').hide();" type="button" />
-				</p:confirmDialog>
-
+			
+			<h:outputLabel value="Kullanıcı Adı:" style="font-weight:bold" />
+			<p:inputText 
+				value="#{kayitController.kullaniciAd}"
+			 	required="true" />
+			<h:outputLabel value="Kullanıcı Mail Adresi:" style="font-weight:bold" />
+			<p:inputText id="kisimail"
+				value="#{kayitController.mail}"
+				required="true" />
+				<h:outputLabel value="Bağlı Bulunulan Kurum:" style="font-weight:bold" />
+			
+				<p:autoComplete value="#{kayitController.okul}" required="true"
+								 completeMethod="#{kayitController.completeKurumAd}">
+				</p:autoComplete>
+				<h:outputLabel value="Kullanıcı Unvan:" style="font-weight:bold" />
+			
+			<p:selectOneMenu  
+	 			value="#{kayitController.unvan}" required="true">
+				<f:selectItem itemValue="Unvan Yok" itemLabel="Unvan Yok" />
+				<f:selectItem itemValue="Öğrenci" itemLabel="Öğrenci" />
+				<f:selectItem itemValue="Araştırma Grv." itemLabel="Araştırma Grv." />
+				<f:selectItem itemValue="Dr." itemLabel="Dr." />
+				<f:selectItem itemValue="Yar.Doç.Dr." itemLabel="Yar.Doç.Dr." />
+				<f:selectItem itemValue="Doç.Dr." itemLabel="Doç.Dr." />
+				<f:selectItem itemValue="Prof.Dr" itemLabel="Prof.Dr" />
+			</p:selectOneMenu>
+						
+			
 			</h:panelGrid>
+								
+			
+			<p:commandButton action="#{kayitController.kayitBasvuruAl}" value="Kayıt Ol" ajax="false" >
+			
+					
+						
+		</p:commandButton>
+		<p:growl id="MailFormatId"    closable="true"/>
+				<p:growl id="BenzersizMailId"   closable="true"/>
+					<p:growl id="haberId"  showDetail="true" closable="true"/>
+		<p:commandButton immediate="true" action="#{kayitController.giriseDon}" value="Giriş Sayfasına Dön" ajax="false" />
+		</h:panelGrid>
+			
 
 
 

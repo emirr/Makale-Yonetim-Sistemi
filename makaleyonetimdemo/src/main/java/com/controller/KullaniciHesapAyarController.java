@@ -157,7 +157,7 @@ public class KullaniciHesapAyarController implements Serializable {
 	}
 
 	public String guncelle() {
-		System.out.println("güncellemeler yapýlýyor.");
+		System.out.println("gï¿½ncellemeler yapï¿½lï¿½yor.");
 
 		if (!tip.equals(prevUnvan) || !prevMail.equals(kisi.getMail()) || !prevOkul.equals(kisi.getOkul())
 				|| !prevAd.equals(kisi.getKullaniciAd()) || (!resetSifre.equals("") && !prevSifre.equals(resetSifre))) {
@@ -178,7 +178,7 @@ public class KullaniciHesapAyarController implements Serializable {
 		return "";
 	}
 
-	// bu metod güncelle metodundan önce çaðýrýlacak
+	// bu metod gï¿½ncelle metodundan ï¿½nce ï¿½aï¿½ï¿½rï¿½lacak
 	public void validateGuncellemeBilgileri(ComponentSystemEvent event) {
 
 		 FacesContext fc = FacesContext.getCurrentInstance();
@@ -192,10 +192,10 @@ public class KullaniciHesapAyarController implements Serializable {
 			if (!yeniSifre.equals("")) {
 				UIInput uiYeniSifreDogrula = (UIInput) components.findComponent("yeniSifreDogrula");
 				String yeniSifreDogrula = uiYeniSifreDogrula.getLocalValue().toString();
-				System.out.println("yeniSifreDoðrulama:" + yeniSifreDogrula);
+				System.out.println("yeniSifreDoï¿½rulama:" + yeniSifreDogrula);
 				if (!yeniSifre.equals(yeniSifreDogrula)) {
-					System.out.println("þifre doðrulama hatasý");
-					FacesMessage msg = new FacesMessage("þifre doðrulama hatasý");
+					System.out.println("ï¿½ifre doï¿½rulama hatasï¿½");
+					FacesMessage msg = new FacesMessage("ÅŸifre doÄŸrulama hatasÄ±");
 					msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 					fc.addMessage(yeniSifre, msg);
 					fc.renderResponse();
@@ -214,7 +214,7 @@ public class KullaniciHesapAyarController implements Serializable {
 			Matcher matcher = pattern.matcher(yeniMail);
 			
 			if(!matcher.matches()){
-				FacesMessage msg = new FacesMessage("Yanlýþ mail formatý");
+				FacesMessage msg = new FacesMessage("YanlÄ±ÅŸ mail formatÄ±");
 				msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 				fc.addMessage(yeniMail, msg);
 				fc.renderResponse();
@@ -223,8 +223,8 @@ public class KullaniciHesapAyarController implements Serializable {
 
 			if (!prevMail.equals(yeniMail)) {
 				if (ks.findKullaniciByMail(yeniMail) != null) {
-					System.out.println("bu mail adresi alýnamaz");
-					FacesMessage msg = new FacesMessage("bu mail adresi alýnamaz");
+					System.out.println("bu mail adresi alÄ±namaz");
+					FacesMessage msg = new FacesMessage("bu mail adresi alÄ±namaz");
 					msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 					fc.addMessage(yeniMail, msg);
 					fc.renderResponse();

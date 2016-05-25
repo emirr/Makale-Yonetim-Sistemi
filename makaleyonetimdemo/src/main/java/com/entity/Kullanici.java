@@ -42,6 +42,27 @@ public class Kullanici implements Serializable {
     @Column(name = "Sifre")
 	private String sifre;
     
+	 @Column(name = "message")
+		private String message;
+	 public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public int getMessagestat() {
+		return messagestat;
+	}
+
+	public void setMessagestat(int messagestat) {
+		this.messagestat = messagestat;
+	}
+
+	@Column(name = "messagestat")
+		private int messagestat;
+	 
     @Enumerated(EnumType.STRING)
     private Rol rol;
     

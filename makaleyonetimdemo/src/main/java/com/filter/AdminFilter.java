@@ -27,11 +27,13 @@ public class AdminFilter  extends AbstractFilter implements Filter{
 		//System.out.println("requested url");
 		System.out.println("admin filtersinde");
 		if (kullaniciControl != null) {
-			if(kullaniciControl.getKullanici().getRol().equals("ADMIN")){
+			//System.out.println("rol:"+kullaniciControl.getKullanici().getRol());
+			if(kullaniciControl.getKullanici().getRol().toString().equals("ADMIN")){
 				
 				chain.doFilter(request, response);
 			}
 			else{
+				System.out.println("niye reddetin");
 				accessDenied(request, response, req);
 			
 			}

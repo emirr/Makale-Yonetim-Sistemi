@@ -68,33 +68,33 @@ public class KullaniciEtkinlikController implements Serializable {
 		
 
 		int gecenGun = (int) (((mevcutZaman - etkinlikZaman) / 1000) / 3600) / 24;
-		System.out.println("etkinlik" + etkinlik.getId() + "için geçen gün sayısı:" + gecenGun);
+		System.out.println("etkinlik" + etkinlik.getId() + "iÃ§in geÃ§en gÃ¼n sayÄ±sÄ±:" + gecenGun);
 		if (gecenGun > 0) {
 			etkinlikBilgi += gecenGun;
-			etkinlikBilgi += " gün önce";
+			etkinlikBilgi += " gÃ¼n Ã¶nce";
 		}
 
 		if (!(gecenGun > 0)) {
 			int gecenSaat = (int) ((mevcutZaman - etkinlikZaman) / 1000) / 3600;
-			System.out.println("etkinlik" + etkinlik.getId() + "için geçen saat sayısı:" + gecenSaat);
+			System.out.println("etkinlik" + etkinlik.getId() + "iÃ§in geÃ§en saat sayÄ±sÄ±:" + gecenSaat);
 
 			if (gecenSaat > 0) {
 				etkinlikBilgi += gecenSaat;
-				etkinlikBilgi += " saat önce";
+				etkinlikBilgi += " saat ï¿½nce";
 			} else {
 				int gecenDakika = (int) ((mevcutZaman - etkinlikZaman) / 1000) / 60;
-				System.out.println("etkinlik" + etkinlik.getId() + "için geçen dk. sayısı:" + gecenDakika);
+				System.out.println("etkinlik" + etkinlik.getId() + "iÃ§in geÃ§en dk. sayÄ±sÄ±:" + gecenDakika);
 
 				if (gecenDakika > 0) {
 					etkinlikBilgi += gecenDakika;
-					etkinlikBilgi += " dakika önce";
+					etkinlikBilgi += " dakika Ã¶nce";
 				}
 				else{
 					int gecenSaniye = (int) (mevcutZaman - etkinlikZaman) / 1000;
-					System.out.println("etkinlik" + etkinlik.getId() + "için geçen saniye sayısı:" + gecenSaniye);
+					System.out.println("etkinlik" + etkinlik.getId() + "iÃ§in geÃ§en saniye sayÄ±sÄ±:" + gecenSaniye);
 
 					etkinlikBilgi += gecenSaniye;
-					etkinlikBilgi += " saniye önce";
+					etkinlikBilgi += " saniye Ã¶nce";
 				}
 
 			}

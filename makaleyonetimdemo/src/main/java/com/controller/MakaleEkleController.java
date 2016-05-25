@@ -28,7 +28,9 @@ import com.entity.MakaleYayinTipi;
 import com.entity.Referans;
 import com.entity.Yazar;
 import com.service.DergiService;
+import com.service.MakaleMetadataService;
 import com.service.MakalePathService;
+import com.service.MakaleService;
 import com.service.MakaleYayinTipiService;
 import com.service.ReferansService;
 import com.service.YazarService;
@@ -43,9 +45,52 @@ public class MakaleEkleController implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Makale makale = new Makale();
+	private String konu, anahtarKelimeler, makalenot;
+	public String getKonu() {
+		return konu;
+	}
+
+	public void setKonu(String konu) {
+		this.konu = konu;
+	}
+
+	public String getAnahtarKelimeler() {
+		return anahtarKelimeler;
+	}
+
+	public void setAnahtarKelimeler(String anahtarKelimeler) {
+		this.anahtarKelimeler = anahtarKelimeler;
+	}
+
+	public String getMakalenot() {
+		return makalenot;
+	}
+
+	public void setMakalenot(String not) {
+		this.makalenot = not;
+	}
+
+	public int getPuan() {
+		return puan;
+	}
+
+	public void setPuan(int puan) {
+		this.puan = puan;
+	}
+
+	private int puan;
 	private Referans referans = new Referans();
-	private Dergi dergi = new Dergi();
+	//private Dergi dergi = new Dergi();
 	private String yazarAdlari;
+	private boolean newRef, eserAdDenetlendi;
+	public boolean isEserAdDenetlendi() {
+		return eserAdDenetlendi;
+	}
+
+	public void setEserAdDenetlendi(boolean isEserAdDenetlendi) {
+		this.eserAdDenetlendi = isEserAdDenetlendi;
+	}
+
 	UploadedFile file;
 	 
     public UploadedFile getFile() {
@@ -66,6 +111,15 @@ public class MakaleEkleController implements Serializable {
 	MakaleYayinTipiService myts = new MakaleYayinTipiService();
 	private MakaleMetadata makaleMetadata = new MakaleMetadata();
 	private Yazar yazar = new Yazar();
+	private String yazarList;
+	public String getYazarList() {
+		return yazarList;
+	}
+
+	public void setYazarList(String yazarList) {
+		this.yazarList = yazarList;
+	}
+
 	private String yazarAd = "";
 	public String getYazarAd() {
 		return yazarAd;
@@ -104,28 +158,28 @@ public class MakaleEkleController implements Serializable {
 		this.isReferansOlusturuldu = isReferansOlusturuldu;
 	}
 
-	public boolean isTipYazarOlusturuldu() {
-		return tipYazarOlusturuldu;
+	public boolean istipOlusturuldu() {
+		return tipOlusturuldu;
 	}
 
-	public void setTipYazarOlusturuldu(boolean tipYazarOlusturuldu) {
-		this.tipYazarOlusturuldu = tipYazarOlusturuldu;
+	public void settipOlusturuldu(boolean tipOlusturuldu) {
+		this.tipOlusturuldu = tipOlusturuldu;
 	}
 
-	public boolean isS3YuklemesiYapýldý() {
-		return isS3YuklemesiYapýldý;
+	public boolean isS3YuklemesiYapildi() {
+		return s3YuklemesiYapildi;
 	}
 
-	public void setS3YuklemesiYapýldý(boolean isS3YuklemesiYapýldý) {
-		this.isS3YuklemesiYapýldý = isS3YuklemesiYapýldý;
+	public void setS3YuklemesiYapildi(boolean isS3YuklemesiYapildi) {
+		this.s3YuklemesiYapildi = isS3YuklemesiYapildi;
 	}
 
 	public boolean isMakaleOlusturuldu() {
-		return isMakaleOlusturuldu;
+		return makaleOlusturuldu;
 	}
 
 	public void setMakaleOlusturuldu(boolean isMakaleOlusturuldu) {
-		this.isMakaleOlusturuldu = isMakaleOlusturuldu;
+		this.makaleOlusturuldu = isMakaleOlusturuldu;
 	}
 
 	public boolean isMetadataOlusturuldu() {
@@ -160,10 +214,10 @@ public class MakaleEkleController implements Serializable {
 	}
 
 	private HashSet<Yazar> yazarSet = new HashSet<>();
-	private boolean isReferansOlusturuldu, isDergiOlusturuldu, tipYazarOlusturuldu, 
-			isS3YuklemesiYapýldý, isMakaleOlusturuldu, isMetadataOlusturuldu;
+	private boolean isReferansOlusturuldu,  tipOlusturuldu, 
+			s3YuklemesiYapildi, makaleOlusturuldu, isMetadataOlusturuldu;
 	private Boolean isYeniReferans = null;
-	private int referansSýnamaSayýsý;
+	private int referansSinamaSayisi;
 	@ManagedProperty("#{kullaniciController}")
 	private KullaniciController kullaniciController;
 
@@ -192,13 +246,13 @@ public class MakaleEkleController implements Serializable {
 		System.out.println("refsayi:" + referans.getSayi());
 	}
 
-	public Dergi getDergi() {
-		return dergi;
-	}
-
-	public void setDergi(Dergi dergi) {
-		this.dergi = dergi;
-	}
+//	public Dergi getDergi() {
+//		return dergi;
+//	}
+//
+//	public void setDergi(Dergi dergi) {
+//		this.dergi = dergi;
+//	}
 
 	public MakaleYayinTipi getMakaleyayintipi() {
 		return makaleyayintipi;
@@ -216,62 +270,120 @@ public class MakaleEkleController implements Serializable {
 		this.makalepath = makalepath;
 	}
 
+	public void eserAdDenetim(){
+		System.out.println("eseraddenetimi yapï¿½lï¿½yor.");
+		eserAdDenetlendi = true;
+		ReferansService rs = new ReferansService();
+		Referans ref = rs.findReferans(referans.getReferansad());
+		if(ref == null)
+			newRef = true;
+		else//burada hazï¿½r refransï¿½ al
+		{
+//			if(makaleTip.equals("Makale"))
+//				dergi = ref.getDergi();
 	
-
-	public String referansiDenetle() {
-		if (referansSýnamaSayýsý == 0) {
+			referans = ref;
+			yazarList = referans.getYazarlar().toString();
+		}
+	}
+	public boolean isNewRef(){
+		
+			
+		return newRef;
+	}
+	
+	public void hataBildir(){
+		ReferansService rs = new ReferansService();
+		System.out.println("hata mesaj:"+referans.getRefhatamsg());
+		rs.updateReferansHata(referans, 1, referans.getRefhatamsg());
+		//referans.setReferanshata(1);//referans durumu hatalï¿½ olarak blidirildi.
+	
+	}
+	
+	public String referansiKaydet() {
+		if (referansSinamaSayisi == 0) {
 			ReferansService rs = new ReferansService();
-			DergiService ds = new DergiService();
-
-			if (ds.findExistDergi(dergi) == null) {
-				ds.createDergi(dergi);
-				isDergiOlusturuldu = true;
-				System.out.println("vt de bu dergi yokmuþ");
-			} else
-				System.out.println("vt de bu dergi varmýþ");
-
-			dergi = ds.findExistDergi(dergi);
-
-			referans.setDergi(dergi);
-			System.out.println("dergi sayý:" + referans.getSayi());
-			System.out.println("kullanýcý id:" + kullaniciController.getKullanici().getId());
+//			DergiService ds = new DergiService();
+//			if(makaleTip.equals("Makale")){
+//				if (ds.findExistDergi(dergi) == null) {
+//					ds.createDergi(dergi);
+//					isDergiOlusturuldu = true;
+//					System.out.println("vt de bu dergi yokmuï¿½");
+//				} else
+//					System.out.println("vt de bu dergi varmï¿½ï¿½");
+//
+//				dergi = ds.findExistDergi(dergi);
+//				referans.setDergi(dergi);
+//			}
+			if(referans!=null)
+				System.out.println("konferansadï¿½:"+referans.getKonferansad());
+			else
+				System.out.println("ref nuull");
+			//System.out.println("sayï¿½:" + referans.getSayi());
+			System.out.println("kullanï¿½cï¿½ id:" + kullaniciController.getKullanici().getId());
 			if (rs.kullaniciSahipOlduguReferanslar(kullaniciController.getKullanici().getId()) != null) {
 				if (!rs.kullaniciSahipOlduguReferanslar(kullaniciController.getKullanici().getId())
 						.contains(referans)) {
-					if (rs.findReferans(referans.getYil(), referans.getSayi(), referans.getCiltNo(),
-							referans.getBasSayfaNo(), referans.getSonSayfaNo(), dergi) == null) {
+					if (rs.findReferans(referans.getReferansad()) == null) {
 						isYeniReferans = true;
-						rs.createReferans(referans, dergi);
+						rs.createReferans(referans);
 						isReferansOlusturuldu = true;
-						FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("KAYIT BAÞARILI",
-								"Girdiðiniz dergi-referans bilgileri sisteme kaydedildi, bir sonraki adým için next'e basýn."));
+						FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("KAYIT BAï¿½ARILI",
+								"Girdiï¿½iniz dergi-referans bilgileri sisteme kaydedildi, bir sonraki adÄ±m iÃ§in next'e basÄ±n."));
 						System.out.println("referans yeni");
 						// return "makalebilgi";
 					} else {
 						isYeniReferans = false;
-						FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("KAYIT BAÞARILI",
-								"Girdiðiniz dergi-referans bilgileri sistemde kayýtlý, bir sonraki adým için next'e basýn."));
-						System.out.println("böyle bir referans var");
+						FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("KAYIT BAÅžARILI",
+								"GirdiÄŸiniz referans bilgileri sistemde kayÄ±tlÄ±, bir sonraki adim iÃ§in next'e basÄ±n."));
+						System.out.println("bÃ¶yle bir referans var"); 
 						// return "dogrulamayukleme";
 					}
 				} else {
 					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,
-							"Sahip olduðun bir referansý tekrar yükleyemezsin.", ""));
+							"Sahip olduÄŸun bir referansÄ± tekrar yÃ¼kleyemezsin.", ""));
 				}
 			}
-
-			referansSýnamaSayýsý++;
+			YazarService ys = new YazarService();
+			System.out.println("referans iï¿½in yazarlar oluï¿½turuluyor...");
+			ys.createYazarForReferans(referans, yazarSet);
+			referansSinamaSayisi++;
 		} else {
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(FacesMessage.SEVERITY_WARN, "Birden fazla sýnama yapamazsýn.", ""));
-			System.out.println("birden fazla sýnama yapamazsýn");
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Birden fazla sï¿½nama yapamazsï¿½n.", ""));
+			System.out.println("birden fazla sï¿½nama yapamazsï¿½n");
 		}
 		return "";
 
 	}
 
-	public void makaleTipYazarVeriYukleme() {
-
+	public String verileriKaydet() {
+		MakaleService ms = new MakaleService();
+		MakaleMetadataService mmds = new MakaleMetadataService();
+		Makale mkl = new Makale();
+		if(anahtarKelimeler != null)
+			mkl.setAnahtarKelimeler(anahtarKelimeler);
+		mkl.setMakaleAdi(referans.getReferansad());
+		//mkl.setReferans(referans);
+		//mkl.setMakaleYayinTipi(makaleyayintipi);
+		MakaleMetadata mmd = new MakaleMetadata();
+		mmd.setMakaleKonu(konu);
+		if(makalenot != null)
+			mmd.setMakaleNot(makalenot);
+		mmd.setMakalePuan(puan);
+		mmd.setMakale(mkl);
+		if(s3YuklemesiYapildi){
+			ms.createMakaleForKullanici(mkl, kullaniciController.getKullanici().getId(), makalepath, makaleyayintipi, referans);
+			makaleOlusturuldu = true;
+			System.out.println("yÃ¼klenen makale id:" + mkl.getId());
+			mmds.createMakaleMetadata(mmd, mkl.getId());
+			isMetadataOlusturuldu = true;
+		}
+		else{
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_WARN, "Ã–nce dosyayÄ± yÃ¼klemelisiniz.", ""));
+		}
+		return "/pages/protected/kullanici/kullaniciAnaSayfasi.xhtml?faces-redirect=true";
 	}
 
 	public String silme() {
@@ -284,9 +396,9 @@ public class MakaleEkleController implements Serializable {
 		// ms.deleteMakale(makale);
 		// }
 		// else{
-		if (tipYazarOlusturuldu) {
+		if (tipOlusturuldu) {
 			myts.deleteMakaleYayinTipi(makaleyayintipi);
-			System.out.println("yayýn tipi silindi.");
+			System.out.println("yayÄ±n tipi silindi.");
 //			YazarService ys = new YazarService();
 //			ReferansService rs = new ReferansService();
 
@@ -295,21 +407,27 @@ public class MakaleEkleController implements Serializable {
 //			//System.out.println("yazarlist size:"+ yazarList.size());
 //			for(Yazar yazar : yazarList1){
 //				if(yazar.getReferansler().size() == 0){
-//					System.out.println("referansý kalmayan yazar adý:" + yazar.getYazarAdi());
+//					System.out.println("referansï¿½ kalmayan yazar adï¿½:" + yazar.getYazarAdi());
 //					ys.deleteYazar(yazar);
 //				}
 //			}
 		}
-		if (isS3YuklemesiYapýldý) {
+		if (s3YuklemesiYapildi) {
 			MakalePathService mps = new MakalePathService();
 			mps.deleteMakalePath(makalepath);
 			System.out.println("path silindi.");
-			// deleteFromS3() metodu makalepath service tarafýndan halledilir.
+			// deleteFromS3() metodu makalepath service tarafï¿½ndan halledilir.
 		}
 		if (isReferansOlusturuldu) {
 			ReferansService rs = new ReferansService();
 			rs.deleteMakaleReferans(referans);
-			System.out.println("dergi-referans silindi.");
+			System.out.println("referans silindi.");
+		}
+		if(makaleOlusturuldu){
+			MakaleService ms = new MakaleService();
+			ms.deleteMakale(makale);
+			System.out.println("referans silindi.");
+
 		}
 		// }
 		KullaniciController.urlHandler();
@@ -324,7 +442,7 @@ public class MakaleEkleController implements Serializable {
 		return "/pages/protected/kullanici/kullaniciAnaSayfasi.xhtml?faces-redirect=true";
 	}
 	
-	//bu metod referansýDenetle metodundan önce çaðýrýlýr.
+	//bu metod referansï¿½Denetle metodundan ï¿½nce ï¿½aï¿½ï¿½rï¿½lï¿½r.
 	public void validateSayfaNo(ComponentSystemEvent event) {
 
 		FacesContext fc = FacesContext.getCurrentInstance();
@@ -366,7 +484,7 @@ public class MakaleEkleController implements Serializable {
 
 		if (basSayfaNo > sonSayfaNo) {
 
-			FacesMessage msg = new FacesMessage("Baþ sayfa, son sayfadan büyük olamaz");
+			FacesMessage msg = new FacesMessage("BaÅŸ sayfa, son sayfadan bÃ¼yÃ¼k olamaz");
 			msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 			fc.addMessage(passwordId, msg);
 			fc.renderResponse();
@@ -376,7 +494,7 @@ public class MakaleEkleController implements Serializable {
 				for (Referans ref : referans) {
 					if (ref.getBasSayfaNo() == basSayfaNo) {
 						if (ref.getSonSayfaNo() != sonSayfaNo) {
-							FacesMessage msg = new FacesMessage("Geçerli sayfa numaralarý giriniz");
+							FacesMessage msg = new FacesMessage("GeÃ§erli sayfa numaralarÄ± giriniz");
 							msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 							fc.addMessage(passwordId, msg);
 							fc.renderResponse();
@@ -385,7 +503,7 @@ public class MakaleEkleController implements Serializable {
 
 					} else {
 						if (ref.getSonSayfaNo() == sonSayfaNo) {
-							FacesMessage msg = new FacesMessage("Geçerli sayfa numaralarý giriniz");
+							FacesMessage msg = new FacesMessage("GeÃ§erli sayfa numaralarÄ± giriniz");
 							msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 							fc.addMessage(passwordId, msg);
 							fc.renderResponse();
@@ -395,7 +513,7 @@ public class MakaleEkleController implements Serializable {
 					}
 					if ((ref.getBasSayfaNo() > basSayfaNo && ref.getSonSayfaNo() < sonSayfaNo)
 							|| (ref.getBasSayfaNo() < basSayfaNo && ref.getSonSayfaNo() > sonSayfaNo)) {
-						FacesMessage msg = new FacesMessage("Geçerli sayfa numaralarý giriniz");
+						FacesMessage msg = new FacesMessage("GeÃ§erli sayfa numaralarÄ± giriniz");
 						msg.setSeverity(FacesMessage.SEVERITY_ERROR);
 						fc.addMessage(passwordId, msg);
 						fc.renderResponse();
@@ -407,42 +525,41 @@ public class MakaleEkleController implements Serializable {
 
 	}
 
-	public List<Dergi> completeDergi(String dergiAd) {
-		DergiService ds2 = new DergiService();
-		List<Dergi> dergiler = new ArrayList<>();
-		for (Dergi dergi : ds2.listDergiler()) {
-			if (dergi.getDergiAdi().toLowerCase().contains(dergiAd))
-				dergiler.add(dergi);
-		}
-		return dergiler;
-	}
+	
 	
 	
 
 	public String onFlowProcess(FlowEvent event) {
-		if (isYeniReferans != null) {
-			if (isYeniReferans)
-				return event.getNewStep();
-			else
-				return "dogrulamayukleme";
-		} else {
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-					"UYARI: Dergi-Referans bilgilerini kaydetmeden bir sonraki adýma geçilemez.", ""));
-			// System.out.println("önce referans bilgilerini sýnamalýsýn");
-			return "dergireferans";
+//		if (isYeniReferans != null) {
+//			if (isYeniReferans)
+//				return event.getNewStep();
+//			else
+//				return "dogrulamayukleme";
+//		} else {
+//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+//					"UYARI: Dergi-Referans bilgilerini kaydetmeden bir sonraki adï¿½ma geï¿½ilemez.", ""));
+//			// System.out.println("ï¿½nce referans bilgilerini sï¿½namalï¿½sï¿½n");
+//			return "dergireferans";
+//		}
+		if(tipOlusturuldu){
+			return event.getNewStep();
 		}
+		else{
+			return "tipsecim";
+		}
+		
 	}
 	
-	//2.adýmda kaydet butonu ile burasý çalýþtýrýlýr.
-	public void tipYazarOlustur(){
-		boolean isKonferans = false;
+	//1.adï¿½mda kaydet butonu ile burasï¿½ ï¿½alï¿½ï¿½tï¿½rï¿½lï¿½r.
+	public void tipOlustur(){
+		boolean isMakale = false;
 		boolean isBildiri = false;
 		boolean isKitap = false;
 		boolean isTez = false;
-
+		
 		if (makaleTip.equals("Tez")){
 			isTez = true;
-			makaleyayintipi.setBildiri(isTez);
+			makaleyayintipi.setTez(isTez);
 
 		}
 		if (makaleTip.equals("Bildiri")){
@@ -452,30 +569,30 @@ public class MakaleEkleController implements Serializable {
 		}
 		if (makaleTip.equals("Kitap")){
 			isKitap = true;
-			makaleyayintipi.setBildiri(isKitap);
+			makaleyayintipi.setKitap(isKitap);
 
 		}
-		if (makaleTip.equals("Konferans")){
-			isKonferans = true;
-			makaleyayintipi.setBildiri(isKonferans);
+		if (makaleTip.equals("Makale")){
+			isMakale = true;
+			makaleyayintipi.setMakale(isMakale);
 
 		}
-		System.out.println("makale yayin tipi oluþturuluyor...");
+		System.out.println("makale yayin tipi oluï¿½turuluyor..."+makaleTip);
 		myts.createMakaleYayinTipi(makaleyayintipi);
-		YazarService ys = new YazarService();
-		System.out.println("referans için yazarlar oluþturuluyor...");
-		ys.createYazarForReferans(referans, yazarSet);
 		
-		tipYazarOlusturuldu = true;
+		tipOlusturuldu = true;
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+				""+makaleTip+" tipi seÃ§ildi", ""));
 		
 		
 	}
-	//2. adýmda yazar ekle butonuna her basýldýðýnda bu metod çaðýrýlýr.
+	//2. adï¿½mda yazar ekle butonuna her basï¿½ldï¿½ï¿½ï¿½nda bu metod ï¿½aï¿½ï¿½rï¿½lï¿½r.
 	public void yazarEkle(){
 		YazarService ys = new YazarService();
-		System.out.println("yazar adý:" + yazarAd);
+		yazarAd = yazarAd.toLowerCase();
+		System.out.println("yazar adÄ±:" + yazarAd);
 		Yazar yzr = ys.findYazarByAd(yazarAd);
-		if(yzr == null){
+		if(yzr == null){ 
 			yzr = new Yazar(yazarAd);
 			//ys.create(yzr);
 			//yzr = ys.findYazarByAd(yazarAd);
@@ -488,6 +605,7 @@ public class MakaleEkleController implements Serializable {
 				"Yazar kaydedildi", ""));
 		setYazarAdlari(yazarSet.toString());
 		System.out.println(getYazarAdlari());
+		yazarAd = "";
 	}
 	//yazar autocomplete
 	public List<Yazar> completeYazar(String yazarAd) {
@@ -499,6 +617,96 @@ public class MakaleEkleController implements Serializable {
 		}
 		return yazarlar;
 	}
+	//eserad autocomplete
+	public List<String> completeEserAd(String referansad) {
+		ReferansService rs = new ReferansService();
+		List<String> referanslar = new ArrayList<>();
+		Makale mkl = null;
+		MakaleService ms = new MakaleService();
+		for (Referans ref : rs.allRefs()) {
+			mkl = ms.findMakaleByReferans(ref);
+			if(mkl != null){
+				System.out.println("makaletip:"+ mkl.getMakaleYayinTipi());
+				System.out.println("makaleTip:"+makaleTip);
+				System.out.println("refad19:"+ref.getReferansad());
+
+			}
+			else
+				System.out.println("mkl null");
+			if(mkl != null && mkl.getMakaleYayinTipi().toString().equals(makaleTip)){
+				System.out.println("refad20:"+ref.getReferansad());
+				if (ref.getReferansad().toLowerCase().contains(referansad)){
+					System.out.println("refad:"+referansad);
+					referanslar.add(ref.getReferansad());
+				}
+			}
+
+			
+				
+		}
+		return referanslar;
+	}
+	//kitapevi autocomplete
+	public List<String> completeKitapevi(String kitapevi) {
+		ReferansService rs = new ReferansService();
+		List<String> referanslar = new ArrayList<>();
+		for (Referans ref : rs.allRefs()) {
+			if (ref.getKitapevi() != null && ref.getKitapevi().toLowerCase().contains(kitapevi))
+				referanslar.add(ref.getKitapevi());
+		}
+		return referanslar;
+	}
+	//kurumad autocomplete
+	public List<String> completeKurumAd(String kurumad) {
+		ReferansService rs = new ReferansService();
+		List<String> referanslar = new ArrayList<>();
+		for (Referans ref : rs.allRefs()) {
+			if (ref.getKurumad() !=null && ref.getKurumad().toLowerCase().contains(kurumad))
+				referanslar.add(ref.getKurumad());
+		}
+		return referanslar;
+	}
+	//konferansad autocomplete
+	public List<String> completeKonferansAd(String konferansad) {
+		ReferansService rs = new ReferansService();
+		List<String> referanslar = new ArrayList<>();
+		for (Referans ref : rs.allRefs()) {
+			if (ref.getKonferansad() !=null && ref.getKonferansad().toLowerCase().contains(konferansad))
+				referanslar.add(ref.getKonferansad());
+		}
+		return referanslar;
+	}
+	public List<String> completeDergi(String dergiad) {
+		ReferansService rs = new ReferansService();
+		List<String> referanslar = new ArrayList<>();
+		for (Referans ref : rs.allRefs()) {
+			if (ref.getDergiad() != null && ref.getDergiad().toLowerCase().contains(dergiad))
+				referanslar.add(ref.getDergiad());
+		}
+		return referanslar;
+	}
+	public List<String> completeYer(String yerad) {
+		ReferansService rs = new ReferansService();
+		List<String> referanslar = new ArrayList<>();
+		for (Referans ref : rs.allRefs()) {
+			System.out.println("refid:"+ref.getId());
+			if (ref.getYer() != null && ref.getYer() != null && ref.getYer().contains(yerad)){
+				referanslar.add(ref.getYer());
+				System.out.println("yer:"+ ref.getYer());
+			}
+		}
+		return referanslar;
+	}
+	
+	public List<String> completeEserKonu(String eserKonu) {
+		MakaleService ms = new MakaleService();
+		List<String> konular = new ArrayList<>();
+		for (Makale makale : ms.tumMakaleler()) {
+			if (makale.getMakaleMetadata().getMakaleKonu().contains(eserKonu))
+				konular.add(makale.getMakaleMetadata().getMakaleKonu());
+		}
+		return konular;
+	}
 	public void resetTipYazar(){
 		makaleTip = "";
 		yazarSet.clear();
@@ -509,9 +717,10 @@ public class MakaleEkleController implements Serializable {
         // Print out the information of the file
         System.out.println("Uploaded File Name Is :: "+file.getFileName()+" :: Uploaded File Size :: "+file.getSize());
         makalepath = new MakalePath(referans.getId());
+        System.out.println("fileupload iÃ§in refId:"+referans.getId());
         MakalePathService mps = new MakalePathService();
         mps.createMakalePath(makalepath);
-        System.out.println("makalepath oluþturuldu:" + makalepath.getMakalePath());
+        System.out.println("makalepath oluÅŸturuldu:" + makalepath.getMakalePath());
         InputStream in = null;
 		try {
 			in = file.getInputstream();
@@ -520,8 +729,9 @@ public class MakaleEkleController implements Serializable {
 			e1.printStackTrace();
 		}
         S3DosyaIslemleri.s3DosyaYukleme(makalepath.getMakalePath(), in);
+        s3YuklemesiYapildi = true;
 	}
-	public void fUpd2(){
+	public void fileUpload(){
         // Get uploaded file from the FileUploadEvent
        // this.file = e.getFile();
         // Print out the information of the file
@@ -530,7 +740,7 @@ public class MakaleEkleController implements Serializable {
         makalepath = new MakalePath(referans.getId());
         MakalePathService mps = new MakalePathService();
         mps.createMakalePath(makalepath);
-        System.out.println("makalepath oluþturuldu:" + makalepath.getMakalePath());
+        System.out.println("makalepath oluï¿½turuldu:" + makalepath.getMakalePath());
         InputStream in = null;
 		try {
 			in = file.getInputstream();
